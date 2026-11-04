@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examiner Portal &bull; DevOps Technical Assessment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --warning: #d97706;
+      --warning-bg: #fef3c7;
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* Login Modal */
+    #auth-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .auth-box {
+      background: #ffffff; width: 100%; max-width: 440px; border-radius: 12px;
+      padding: 32px 28px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+      border: 1px solid var(--border); text-align: center;
+    }
+    .auth-badge {
+      display: inline-block; font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary);
+      background: #e0f2fe; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px;
+    }
+    .auth-box h2 { font-size: 1.45rem; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+    .auth-box p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 22px; line-height: 1.5; }
+    .auth-input {
+      width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
+      font-size: 1rem; margin-bottom: 14px; outline: none; transition: all 0.2s;
+    }
+    .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+    .btn-unlock {
+      width: 100%; padding: 12px; background: var(--primary); color: white;
+      border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-unlock:hover { background: var(--primary-hover); }
+    #auth-err { color: var(--danger); font-size: 0.84rem; margin-top: 10px; font-weight: 600; min-height: 18px; }
+
+    /* Header */
+    header {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px 28px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .header-left h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+    .header-left p { font-size: 0.88rem; color: var(--text-muted); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .btn-lock {
+      padding: 8px 16px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;
+      border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-lock:hover { background: #e2e8f0; color: #0f172a; }
+
+    /* Tab navigation */
+    .tabs-wrapper {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 14px; margin-bottom: 18px;
+      scrollbar-width: thin;
+    }
+    .tab-btn {
+      padding: 10px 18px; border-radius: 8px; font-size: 0.88rem; font-weight: 700;
+      border: 1px solid var(--border); background: #ffffff; color: #475569;
+      cursor: pointer; white-space: nowrap; transition: all 0.2s;
+    }
+    .tab-btn:hover { background: #f1f5f9; color: #0f172a; }
+    .tab-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+    /* Lab Overview Card */
+    .overview-card {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .overview-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .overview-sub { font-size: 0.85rem; color: var(--text-muted); }
+    .overview-stats { display: flex; gap: 14px; align-items: center; }
+    .stat-pill {
+      padding: 6px 14px; border-radius: 9999px; font-size: 0.82rem; font-weight: 700;
+    }
+    .stat-avail { background: #dcfce7; color: #15803d; }
+    .stat-used { background: #f1f5f9; color: #64748b; }
+    .btn-direct-link {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+      background: #e0f2fe; color: var(--primary); border: 1px solid #bae6fd;
+      border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none;
+    }
+    .btn-direct-link:hover { background: #bae6fd; }
+
+    /* Search & Filter Bar */
+    .filter-bar {
+      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1; min-width: 240px; padding: 9px 14px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.9rem; outline: none; background: #ffffff;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .btn-reset-lab {
+      padding: 9px 14px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;
+      font-size: 0.84rem; font-weight: 600; color: #64748b; cursor: pointer;
+    }
+    .btn-reset-lab:hover { color: var(--danger); border-color: #fca5a5; }
+
+    /* Table */
+    .table-card {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    thead th {
+      background: #f8fafc; padding: 12px 18px; font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fafc; }
+    tbody tr.is-used { opacity: 0.62; background: #fafafa; }
+    tbody tr.is-used td.user-cell { text-decoration: line-through; color: #94a3b8; }
+    td { padding: 14px 18px; font-size: 0.9rem; vertical-align: middle; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; }
+    .badge-status {
+      display: inline-block; padding: 3px 10px; border-radius: 9999px;
+      font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .badge-available { background: #dcfce7; color: #166534; }
+    .badge-used { background: #f1f5f9; color: #64748b; }
+
+    /* Action buttons */
+    .action-group { display: flex; gap: 8px; align-items: center; }
+    .btn-copy {
+      padding: 6px 12px; background: var(--primary); color: #ffffff; border: none;
+      border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s;
+    }
+    .btn-copy:hover { background: var(--primary-hover); }
+    .btn-toggle-used {
+      padding: 6px 11px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px;
+      font-size: 0.8rem; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-toggle-used:hover { background: #f1f5f9; }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #ffffff;
+      padding: 12px 20px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); opacity: 0; pointer-events: none;
+      transform: translateY(10px); transition: all 0.25s ease; z-index: 10000;
+      display: flex; align-items: center; gap: 8px;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Footer */
+    footer {
+      text-align: center; margin-top: 40px; padding-top: 20px;
+      border-top: 1px solid var(--border); font-size: 0.85rem; color: #94a3b8;
+    }
+    .credit-tag {
+      display: inline-block; margin-top: 8px; font-weight: 700; color: #0284c7;
+      background: #e0f2fe; padding: 4px 14px; border-radius: 9999px; font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Password Unlock Gate -->
+  <div id="auth-overlay">
+    <div class="auth-box">
+      <div class="auth-badge">Interviewer Portal</div>
+      <h2>Examiner Access Gate</h2>
+      <p>Enter the master examiner passphrase to view live credentials and generate candidate invitations.</p>
+      <form id="auth-form">
+        <input type="password" id="master-input" class="auth-input" placeholder="Enter Examiner Passphrase" required autocomplete="off" autofocus>
+        <button type="submit" class="btn-unlock">Unlock Dashboard</button>
+        <div id="auth-err"></div>
+      </form>
+      <div style="margin-top: 20px; font-size: 0.78rem; color: #94a3b8;">
+        Authorized interviewers only &bull; Single session access
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="main-content" style="display: none;">
+    <header>
+      <div class="header-left">
+        <h1>Examiner Assessment Dashboard</h1>
+        <p>1-Click candidate invitation generator &bull; Real-time credential assignment tracker</p>
+      </div>
+      <div class="header-right">
+        <a href="index.html" target="_blank" class="btn-lock">&larr; Candidate Portal</a>
+        <button type="button" class="btn-lock" id="btn-logout">&#128274; Lock Session</button>
+      </div>
+    </header>
+
+    <!-- Lab Selection Tabs -->
+    <div class="tabs-wrapper" id="tabs-container"></div>
+
+    <!-- Lab Overview Info -->
+    <div class="overview-card">
+      <div>
+        <div class="overview-title" id="current-lab-title">Quiz Set 1</div>
+        <div class="overview-sub" id="current-lab-sub">16 Questions (10 Linux MCQs + 6 Technical Challenges)</div>
+      </div>
+      <div class="overview-stats">
+        <a href="#" target="_blank" id="current-lab-link" class="btn-direct-link">&#128279; Open Assessment &rarr;</a>
+        <span class="stat-pill stat-avail" id="stat-avail-count">25 Available</span>
+        <span class="stat-pill stat-used" id="stat-used-count">0 Used</span>
+      </div>
+    </div>
+
+    <!-- Filter & Reset Toolbar -->
+    <div class="filter-bar">
+      <input type="text" id="filter-search" class="search-input" placeholder="Filter by username or status...">
+      <button type="button" id="btn-reset-lab" class="btn-reset-lab">Reset Used State for This Lab</button>
+    </div>
+
+    <!-- Credential Table -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 50px;">#</th>
+            <th>Candidate Username</th>
+            <th>Session Password</th>
+            <th>Status</th>
+            <th style="width: 250px;">Examiner Action</th>
+          </tr>
+        </thead>
+        <tbody id="creds-tbody"></tbody>
+      </table>
+    </div>
+
+    <footer>
+      <div>DevOps Technical Assessment Platform &bull; Examiner Session Management</div>
+      <div class="credit-tag">Designed by Narendra Godi</div>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast"><span id="toast-icon">&#10004;</span> <span id="toast-msg">Copied!</span></div>
+
+  <script>
+    const HASH_1 = "8a8ac89b056c98943c16e5ef22729575e8fe0e394c7da69cbf6d509d6b9d1cb6";
+    const HASH_2 = "b4782e9c897ee86f718a1db5f39343189a96c631dd5d0e0cd7d75da16d89882c";
+    const ALL_CREDS = {
+  "1": [
+    {
+      "num": 1,
+      "username": "quiz1_user_01",
+      "password": "bfHSdCkSkj"
+    },
+    {
+      "num": 2,
+      "username": "quiz1_user_02",
+      "password": "BKmDmMeER#"
+    },
+    {
+      "num": 3,
+      "username": "quiz1_user_03",
+      "password": "%x!r4KapR3"
+    },
+    {
+      "num": 4,
+      "username": "quiz1_user_04",
+      "password": "JXcsNTNcnx"
+    },
+    {
+      "num": 5,
+      "username": "quiz1_user_05",
+      "password": "aSyaLZtfwQ"
+    },
+    {
+      "num": 6,
+      "username": "quiz1_user_06",
+      "password": "ccnvTPV#hu"
+    },
+    {
+      "num": 7,
+      "username": "quiz1_user_07",
+      "password": "e3QCkk!cBB"
+    },
+    {
+      "num": 8,
+      "username": "quiz1_user_08",
+      "password": "%kw3BM6ngk"
+    },
+    {
+      "num": 9,
+      "username": "quiz1_user_09",
+      "password": "f@$Yjk4ssm"
+    },
+    {
+      "num": 10,
+      "username": "quiz1_user_10",
+      "password": "yiVsdHKnk2"
+    },
+    {
+      "num": 11,
+      "username": "quiz1_user_11",
+      "password": "Gq3Y5HR%h9"
+    },
+    {
+      "num": 12,
+      "username": "quiz1_user_12",
+      "password": "A#%!Qk6Sp9"
+    },
+    {
+      "num": 13,
+      "username": "quiz1_user_13",
+      "password": "bDD$vjVDQN"
+    },
+    {
+      "num": 14,
+      "username": "quiz1_user_14",
+      "password": "saYD2@Dqqx"
+    },
+    {
+      "num": 15,
+      "username": "quiz1_user_15",
+      "password": "HNQn9JjXjA"
+    },
+    {
+      "num": 16,
+      "username": "quiz1_user_16",
+      "password": "QY3hE#TZ5b"
+    },
+    {
+      "num": 17,
+      "username": "quiz1_user_17",
+      "password": "2#m26QUeqL"
+    },
+    {
+      "num": 18,
+      "username": "quiz1_user_18",
+      "password": "65dMNyPDQF"
+    },
+    {
+      "num": 19,
+      "username": "quiz1_user_19",
+      "password": "%4U2gSyQeG"
+    },
+    {
+      "num": 20,
+      "username": "quiz1_user_20",
+      "password": "!v$!7FiPXN"
+    },
+    {
+      "num": 21,
+      "username": "quiz1_user_21",
+      "password": "%6pdbmVXBH"
+    },
+    {
+      "num": 22,
+      "username": "quiz1_user_22",
+      "password": "yWZ39nJQ9u"
+    },
+    {
+      "num": 23,
+      "username": "quiz1_user_23",
+      "password": "DegQgXS9qw"
+    },
+    {
+      "num": 24,
+      "username": "quiz1_user_24",
+      "password": "HU64eLdrBw"
+    },
+    {
+      "num": 25,
+      "username": "quiz1_user_25",
+      "password": "mqnD@eTv!9"
+    }
+  ],
+  "2": [
+    {
+      "num": 1,
+      "username": "quiz2_user_01",
+      "password": "PFY2z3j3RU"
+    },
+    {
+      "num": 2,
+      "username": "quiz2_user_02",
+      "password": "vuEsu3sAXT"
+    },
+    {
+      "num": 3,
+      "username": "quiz2_user_03",
+      "password": "2KYr4Wec@P"
+    },
+    {
+      "num": 4,
+      "username": "quiz2_user_04",
+      "password": "PBy3!HwVky"
+    },
+    {
+      "num": 5,
+      "username": "quiz2_user_05",
+      "password": "D2WSmjVKuD"
+    },
+    {
+      "num": 6,
+      "username": "quiz2_user_06",
+      "password": "JF3QF3NV@b"
+    },
+    {
+      "num": 7,
+      "username": "quiz2_user_07",
+      "password": "LbC$k@YZWX"
+    },
+    {
+      "num": 8,
+      "username": "quiz2_user_08",
+      "password": "Ey#6X3@$mk"
+    },
+    {
+      "num": 9,
+      "username": "quiz2_user_09",
+      "password": "KV5MXdDTgw"
+    },
+    {
+      "num": 10,
+      "username": "quiz2_user_10",
+      "password": "Y$hwp2r57r"
+    },
+    {
+      "num": 11,
+      "username": "quiz2_user_11",
+      "password": "e#3w$mc9#V"
+    },
+    {
+      "num": 12,
+      "username": "quiz2_user_12",
+      "password": "n3E$urwkyF"
+    },
+    {
+      "num": 13,
+      "username": "quiz2_user_13",
+      "password": "aDT$xfVWk!"
+    },
+    {
+      "num": 14,
+      "username": "quiz2_user_14",
+      "password": "6ze4JBw#CQ"
+    },
+    {
+      "num": 15,
+      "username": "quiz2_user_15",
+      "password": "BfK@H$r7N#"
+    },
+    {
+      "num": 16,
+      "username": "quiz2_user_16",
+      "password": "ybS8KmxHfH"
+    },
+    {
+      "num": 17,
+      "username": "quiz2_user_17",
+      "password": "dd32PqUvbb"
+    },
+    {
+      "num": 18,
+      "username": "quiz2_user_18",
+      "password": "jR#S9$qppk"
+    },
+    {
+      "num": 19,
+      "username": "quiz2_user_19",
+      "password": "tMup5YAwD#"
+    },
+    {
+      "num": 20,
+      "username": "quiz2_user_20",
+      "password": "tWML8jT22a"
+    },
+    {
+      "num": 21,
+      "username": "quiz2_user_21",
+      "password": "C#4EtTFtMc"
+    },
+    {
+      "num": 22,
+      "username": "quiz2_user_22",
+      "password": "Rv$f983G#Q"
+    },
+    {
+      "num": 23,
+      "username": "quiz2_user_23",
+      "password": "scsjZRAmV!"
+    },
+    {
+      "num": 24,
+      "username": "quiz2_user_24",
+      "password": "ws8EE7r7X3"
+    },
+    {
+      "num": 25,
+      "username": "quiz2_user_25",
+      "password": "hFm@bqg76j"
+    }
+  ],
+  "3": [
+    {
+      "num": 1,
+      "username": "quiz3_user_01",
+      "password": "Dq$BJHHVep"
+    },
+    {
+      "num": 2,
+      "username": "quiz3_user_02",
+      "password": "5qnv6vAvMX"
+    },
+    {
+      "num": 3,
+      "username": "quiz3_user_03",
+      "password": "ATTFS@XdCf"
+    },
+    {
+      "num": 4,
+      "username": "quiz3_user_04",
+      "password": "pWhJ$zZMK2"
+    },
+    {
+      "num": 5,
+      "username": "quiz3_user_05",
+      "password": "mj9#2bPRER"
+    },
+    {
+      "num": 6,
+      "username": "quiz3_user_06",
+      "password": "4KBWapv7zP"
+    },
+    {
+      "num": 7,
+      "username": "quiz3_user_07",
+      "password": "AUK6%ymYy!"
+    },
+    {
+      "num": 8,
+      "username": "quiz3_user_08",
+      "password": "tY7tKxMB28"
+    },
+    {
+      "num": 9,
+      "username": "quiz3_user_09",
+      "password": "HAtjNUDUaw"
+    },
+    {
+      "num": 10,
+      "username": "quiz3_user_10",
+      "password": "ZMfyJEddji"
+    },
+    {
+      "num": 11,
+      "username": "quiz3_user_11",
+      "password": "Kc8V$LTwvD"
+    },
+    {
+      "num": 12,
+      "username": "quiz3_user_12",
+      "password": "JHpK3YsB2s"
+    },
+    {
+      "num": 13,
+      "username": "quiz3_user_13",
+      "password": "5xbk6R@WRz"
+    },
+    {
+      "num": 14,
+      "username": "quiz3_user_14",
+      "password": "kbFJrFMM9c"
+    },
+    {
+      "num": 15,
+      "username": "quiz3_user_15",
+      "password": "Z%h3nA6bkq"
+    },
+    {
+      "num": 16,
+      "username": "quiz3_user_16",
+      "password": "pgaMWNRQxa"
+    },
+    {
+      "num": 17,
+      "username": "quiz3_user_17",
+      "password": "3aTRJ8wrWa"
+    },
+    {
+      "num": 18,
+      "username": "quiz3_user_18",
+      "password": "JznEZUi8zt"
+    },
+    {
+      "num": 19,
+      "username": "quiz3_user_19",
+      "password": "C!6UAyXMxZ"
+    },
+    {
+      "num": 20,
+      "username": "quiz3_user_20",
+      "password": "4E%s2LDkur"
+    },
+    {
+      "num": 21,
+      "username": "quiz3_user_21",
+      "password": "rYq4xwxEbx"
+    },
+    {
+      "num": 22,
+      "username": "quiz3_user_22",
+      "password": "FaSDC3J77z"
+    },
+    {
+      "num": 23,
+      "username": "quiz3_user_23",
+      "password": "gyZHYUsq!h"
+    },
+    {
+      "num": 24,
+      "username": "quiz3_user_24",
+      "password": "XtT8gkvY3v"
+    },
+    {
+      "num": 25,
+      "username": "quiz3_user_25",
+      "password": "9Z4m36Ey@!"
+    }
+  ],
+  "4": [
+    {
+      "num": 1,
+      "username": "quiz4_user_01",
+      "password": "b@k6!k9NFg"
+    },
+    {
+      "num": 2,
+      "username": "quiz4_user_02",
+      "password": "wBW3kQf7T2"
+    },
+    {
+      "num": 3,
+      "username": "quiz4_user_03",
+      "password": "fiPzhn7hx9"
+    },
+    {
+      "num": 4,
+      "username": "quiz4_user_04",
+      "password": "Zj4G6n9L#@"
+    },
+    {
+      "num": 5,
+      "username": "quiz4_user_05",
+      "password": "3!#b4PZq@S"
+    },
+    {
+      "num": 6,
+      "username": "quiz4_user_06",
+      "password": "GPvN7XHmxV"
+    },
+    {
+      "num": 7,
+      "username": "quiz4_user_07",
+      "password": "dYCqNx7Hr#"
+    },
+    {
+      "num": 8,
+      "username": "quiz4_user_08",
+      "password": "agXLRXLnds"
+    },
+    {
+      "num": 9,
+      "username": "quiz4_user_09",
+      "password": "Za#E4wJd3h"
+    },
+    {
+      "num": 10,
+      "username": "quiz4_user_10",
+      "password": "G7FJamQcSL"
+    },
+    {
+      "num": 11,
+      "username": "quiz4_user_11",
+      "password": "uurXuTcABd"
+    },
+    {
+      "num": 12,
+      "username": "quiz4_user_12",
+      "password": "P$vN464EWV"
+    },
+    {
+      "num": 13,
+      "username": "quiz4_user_13",
+      "password": "7ZbDkhE9c$"
+    },
+    {
+      "num": 14,
+      "username": "quiz4_user_14",
+      "password": "KS%dz97MYM"
+    },
+    {
+      "num": 15,
+      "username": "quiz4_user_15",
+      "password": "FKayQJD9rY"
+    },
+    {
+      "num": 16,
+      "username": "quiz4_user_16",
+      "password": "nTq#eAgyjL"
+    },
+    {
+      "num": 17,
+      "username": "quiz4_user_17",
+      "password": "cn@WtwSL!e"
+    },
+    {
+      "num": 18,
+      "username": "quiz4_user_18",
+      "password": "jTdh#$DwVL"
+    },
+    {
+      "num": 19,
+      "username": "quiz4_user_19",
+      "password": "4e8xgDdctE"
+    },
+    {
+      "num": 20,
+      "username": "quiz4_user_20",
+      "password": "xqmK$2LGar"
+    },
+    {
+      "num": 21,
+      "username": "quiz4_user_21",
+      "password": "p@E8gJ4dap"
+    },
+    {
+      "num": 22,
+      "username": "quiz4_user_22",
+      "password": "24DenpFkDE"
+    },
+    {
+      "num": 23,
+      "username": "quiz4_user_23",
+      "password": "jeGN6Nc%xy"
+    },
+    {
+      "num": 24,
+      "username": "quiz4_user_24",
+      "password": "sBvJmtsUTa"
+    },
+    {
+      "num": 25,
+      "username": "quiz4_user_25",
+      "password": "um7mNXgnyB"
+    }
+  ],
+  "5": [
+    {
+      "num": 1,
+      "username": "quiz5_user_01",
+      "password": "!5Zauer9he"
+    },
+    {
+      "num": 2,
+      "username": "quiz5_user_02",
+      "password": "vrQACvznZ9"
+    },
+    {
+      "num": 3,
+      "username": "quiz5_user_03",
+      "password": "BpBC%qLv4e"
+    },
+    {
+      "num": 4,
+      "username": "quiz5_user_04",
+      "password": "Ce6zg!MZQQ"
+    },
+    {
+      "num": 5,
+      "username": "quiz5_user_05",
+      "password": "gPFR!Z62Hy"
+    },
+    {
+      "num": 6,
+      "username": "quiz5_user_06",
+      "password": "RTYUv9KPuS"
+    },
+    {
+      "num": 7,
+      "username": "quiz5_user_07",
+      "password": "DC7%Ds!ppP"
+    },
+    {
+      "num": 8,
+      "username": "quiz5_user_08",
+      "password": "Zbr88949AX"
+    },
+    {
+      "num": 9,
+      "username": "quiz5_user_09",
+      "password": "DdDL86brUp"
+    },
+    {
+      "num": 10,
+      "username": "quiz5_user_10",
+      "password": "L@2!h7R#LJ"
+    },
+    {
+      "num": 11,
+      "username": "quiz5_user_11",
+      "password": "ax!GXrkRrL"
+    },
+    {
+      "num": 12,
+      "username": "quiz5_user_12",
+      "password": "!c8h@xpdjX"
+    },
+    {
+      "num": 13,
+      "username": "quiz5_user_13",
+      "password": "QVTqExhA3H"
+    },
+    {
+      "num": 14,
+      "username": "quiz5_user_14",
+      "password": "9ukFiN8MUH"
+    },
+    {
+      "num": 15,
+      "username": "quiz5_user_15",
+      "password": "5NSwFfdsEh"
+    },
+    {
+      "num": 16,
+      "username": "quiz5_user_16",
+      "password": "UrmD%Qe7yr"
+    },
+    {
+      "num": 17,
+      "username": "quiz5_user_17",
+      "password": "w5anAvgf@B"
+    },
+    {
+      "num": 18,
+      "username": "quiz5_user_18",
+      "password": "a7MQTs2Af3"
+    },
+    {
+      "num": 19,
+      "username": "quiz5_user_19",
+      "password": "wE$CuV732M"
+    },
+    {
+      "num": 20,
+      "username": "quiz5_user_20",
+      "password": "vxf4jBc@!V"
+    },
+    {
+      "num": 21,
+      "username": "quiz5_user_21",
+      "password": "5#bhcj%cZp"
+    },
+    {
+      "num": 22,
+      "username": "quiz5_user_22",
+      "password": "L6nV3@qP9a"
+    },
+    {
+      "num": 23,
+      "username": "quiz5_user_23",
+      "password": "pNdFWyH6$Q"
+    },
+    {
+      "num": 24,
+      "username": "quiz5_user_24",
+      "password": "Vc@$nJVMyg"
+    },
+    {
+      "num": 25,
+      "username": "quiz5_user_25",
+      "password": "X!W2Mh%qKr"
+    }
+  ],
+  "6": [
+    {
+      "num": 1,
+      "username": "quiz6_user_01",
+      "password": "NaCp7ASAH@"
+    },
+    {
+      "num": 2,
+      "username": "quiz6_user_02",
+      "password": "EKnBBNaxtd"
+    },
+    {
+      "num": 3,
+      "username": "quiz6_user_03",
+      "password": "MdGg76pbcB"
+    },
+    {
+      "num": 4,
+      "username": "quiz6_user_04",
+      "password": "PS5jQn88y!"
+    },
+    {
+      "num": 5,
+      "username": "quiz6_user_05",
+      "password": "UpjZ@tA%Ux"
+    },
+    {
+      "num": 6,
+      "username": "quiz6_user_06",
+      "password": "TDmwVsd7@$"
+    },
+    {
+      "num": 7,
+      "username": "quiz6_user_07",
+      "password": "fEUENSk4ii"
+    },
+    {
+      "num": 8,
+      "username": "quiz6_user_08",
+      "password": "B74QGGzgMg"
+    },
+    {
+      "num": 9,
+      "username": "quiz6_user_09",
+      "password": "y7sE%y3#vW"
+    },
+    {
+      "num": 10,
+      "username": "quiz6_user_10",
+      "password": "#%X@k2CJ2i"
+    },
+    {
+      "num": 11,
+      "username": "quiz6_user_11",
+      "password": "$@7vebKp8y"
+    },
+    {
+      "num": 12,
+      "username": "quiz6_user_12",
+      "password": "CaBzjucT!%"
+    },
+    {
+      "num": 13,
+      "username": "quiz6_user_13",
+      "password": "E74M!4LGJ2"
+    },
+    {
+      "num": 14,
+      "username": "quiz6_user_14",
+      "password": "qkzb$dMdDG"
+    },
+    {
+      "num": 15,
+      "username": "quiz6_user_15",
+      "password": "Hm5JrHcd@8"
+    },
+    {
+      "num": 16,
+      "username": "quiz6_user_16",
+      "password": "CwMKaPfBRY"
+    },
+    {
+      "num": 17,
+      "username": "quiz6_user_17",
+      "password": "KMwbz@quy9"
+    },
+    {
+      "num": 18,
+      "username": "quiz6_user_18",
+      "password": "g%5Whr$%8S"
+    },
+    {
+      "num": 19,
+      "username": "quiz6_user_19",
+      "password": "$$eHskZNgz"
+    },
+    {
+      "num": 20,
+      "username": "quiz6_user_20",
+      "password": "isCcvTiNCg"
+    },
+    {
+      "num": 21,
+      "username": "quiz6_user_21",
+      "password": "fcWM8DsSek"
+    },
+    {
+      "num": 22,
+      "username": "quiz6_user_22",
+      "password": "yXXLeAVUJH"
+    },
+    {
+      "num": 23,
+      "username": "quiz6_user_23",
+      "password": "DH2b3pvbHw"
+    },
+    {
+      "num": 24,
+      "username": "quiz6_user_24",
+      "password": "%tu!pzXjx#"
+    },
+    {
+      "num": 25,
+      "username": "quiz6_user_25",
+      "password": "P7w9E@XyFv"
+    }
+  ],
+  "7": [
+    {
+      "num": 1,
+      "username": "quiz7_user_01",
+      "password": "8fe8d8Yr5D"
+    },
+    {
+      "num": 2,
+      "username": "quiz7_user_02",
+      "password": "hDbEPMUAbH"
+    },
+    {
+      "num": 3,
+      "username": "quiz7_user_03",
+      "password": "Cd3ztytdY6"
+    },
+    {
+      "num": 4,
+      "username": "quiz7_user_04",
+      "password": "Rc3G3zNWXb"
+    },
+    {
+      "num": 5,
+      "username": "quiz7_user_05",
+      "password": "UbFDacJn8b"
+    },
+    {
+      "num": 6,
+      "username": "quiz7_user_06",
+      "password": "#gqebt7AEa"
+    },
+    {
+      "num": 7,
+      "username": "quiz7_user_07",
+      "password": "uzgjsJYXMP"
+    },
+    {
+      "num": 8,
+      "username": "quiz7_user_08",
+      "password": "GQyUK2GmPd"
+    },
+    {
+      "num": 9,
+      "username": "quiz7_user_09",
+      "password": "LKLq!mJPmr"
+    },
+    {
+      "num": 10,
+      "username": "quiz7_user_10",
+      "password": "8ffLeCAjGU"
+    },
+    {
+      "num": 11,
+      "username": "quiz7_user_11",
+      "password": "yXCxu3KA4f"
+    },
+    {
+      "num": 12,
+      "username": "quiz7_user_12",
+      "password": "n8D47A4ikc"
+    },
+    {
+      "num": 13,
+      "username": "quiz7_user_13",
+      "password": "b3ufRe95!Z"
+    },
+    {
+      "num": 14,
+      "username": "quiz7_user_14",
+      "password": "9SS2SfibfA"
+    },
+    {
+      "num": 15,
+      "username": "quiz7_user_15",
+      "password": "aN#DqmVY!a"
+    },
+    {
+      "num": 16,
+      "username": "quiz7_user_16",
+      "password": "x#y%z5a@nx"
+    },
+    {
+      "num": 17,
+      "username": "quiz7_user_17",
+      "password": "MXEhZxm68@"
+    },
+    {
+      "num": 18,
+      "username": "quiz7_user_18",
+      "password": "GrTQyDhvVh"
+    },
+    {
+      "num": 19,
+      "username": "quiz7_user_19",
+      "password": "@9wj!Y%zru"
+    },
+    {
+      "num": 20,
+      "username": "quiz7_user_20",
+      "password": "t!wypK9aCX"
+    },
+    {
+      "num": 21,
+      "username": "quiz7_user_21",
+      "password": "p$bydd7pFi"
+    },
+    {
+      "num": 22,
+      "username": "quiz7_user_22",
+      "password": "MFaFPrPGqT"
+    },
+    {
+      "num": 23,
+      "username": "quiz7_user_23",
+      "password": "5HLiUqLKFw"
+    },
+    {
+      "num": 24,
+      "username": "quiz7_user_24",
+      "password": "x9vUNu!zdD"
+    },
+    {
+      "num": 25,
+      "username": "quiz7_user_25",
+      "password": "q7jai8RnzT"
+    }
+  ],
+  "8": [
+    {
+      "num": 1,
+      "username": "quiz8_user_01",
+      "password": "yPeeuGMxk2"
+    },
+    {
+      "num": 2,
+      "username": "quiz8_user_02",
+      "password": "kXLbJ8jaQ3"
+    },
+    {
+      "num": 3,
+      "username": "quiz8_user_03",
+      "password": "NSgjUGE#5R"
+    },
+    {
+      "num": 4,
+      "username": "quiz8_user_04",
+      "password": "%cmaWm2a39"
+    },
+    {
+      "num": 5,
+      "username": "quiz8_user_05",
+      "password": "mS5Pa@Lngr"
+    },
+    {
+      "num": 6,
+      "username": "quiz8_user_06",
+      "password": "HB4V4b#Fep"
+    },
+    {
+      "num": 7,
+      "username": "quiz8_user_07",
+      "password": "%cawMPykit"
+    },
+    {
+      "num": 8,
+      "username": "quiz8_user_08",
+      "password": "FFQ$AYNjTT"
+    },
+    {
+      "num": 9,
+      "username": "quiz8_user_09",
+      "password": "JqjNNfr6Mi"
+    },
+    {
+      "num": 10,
+      "username": "quiz8_user_10",
+      "password": "eLh7ZgdQL9"
+    },
+    {
+      "num": 11,
+      "username": "quiz8_user_11",
+      "password": "VTRGWAXJxp"
+    },
+    {
+      "num": 12,
+      "username": "quiz8_user_12",
+      "password": "VN#RK3jD8e"
+    },
+    {
+      "num": 13,
+      "username": "quiz8_user_13",
+      "password": "mycDNSUa7U"
+    },
+    {
+      "num": 14,
+      "username": "quiz8_user_14",
+      "password": "qxsrK2Uxpf"
+    },
+    {
+      "num": 15,
+      "username": "quiz8_user_15",
+      "password": "RVvz#Rw9PT"
+    },
+    {
+      "num": 16,
+      "username": "quiz8_user_16",
+      "password": "#@u48qEnww"
+    },
+    {
+      "num": 17,
+      "username": "quiz8_user_17",
+      "password": "KWNnkmMU5P"
+    },
+    {
+      "num": 18,
+      "username": "quiz8_user_18",
+      "password": "9QEysd7gcL"
+    },
+    {
+      "num": 19,
+      "username": "quiz8_user_19",
+      "password": "sNQkMVuBd%"
+    },
+    {
+      "num": 20,
+      "username": "quiz8_user_20",
+      "password": "ft5eweQ@UU"
+    },
+    {
+      "num": 21,
+      "username": "quiz8_user_21",
+      "password": "%a2N4%gjwi"
+    },
+    {
+      "num": 22,
+      "username": "quiz8_user_22",
+      "password": "s88MPa4vjD"
+    },
+    {
+      "num": 23,
+      "username": "quiz8_user_23",
+      "password": "L#JbDQz4ZY"
+    },
+    {
+      "num": 24,
+      "username": "quiz8_user_24",
+      "password": "eRxRy$WD@M"
+    },
+    {
+      "num": 25,
+      "username": "quiz8_user_25",
+      "password": "BSL%suSm6d"
+    }
+  ],
+  "9": [
+    {
+      "num": 1,
+      "username": "quiz9_user_01",
+      "password": "4uGAz7m8HL"
+    },
+    {
+      "num": 2,
+      "username": "quiz9_user_02",
+      "password": "PQTvpeAu%%"
+    },
+    {
+      "num": 3,
+      "username": "quiz9_user_03",
+      "password": "H5@jHt#Tsm"
+    },
+    {
+      "num": 4,
+      "username": "quiz9_user_04",
+      "password": "GS5uU@emi6"
+    },
+    {
+      "num": 5,
+      "username": "quiz9_user_05",
+      "password": "TNMDwQVd#z"
+    },
+    {
+      "num": 6,
+      "username": "quiz9_user_06",
+      "password": "3#g%ZfFYQV"
+    },
+    {
+      "num": 7,
+      "username": "quiz9_user_07",
+      "password": "wAz@iRUhV!"
+    },
+    {
+      "num": 8,
+      "username": "quiz9_user_08",
+      "password": "Kyu7C8N4Tj"
+    },
+    {
+      "num": 9,
+      "username": "quiz9_user_09",
+      "password": "%yaNRuTuYA"
+    },
+    {
+      "num": 10,
+      "username": "quiz9_user_10",
+      "password": "%3AJ@S!sfZ"
+    },
+    {
+      "num": 11,
+      "username": "quiz9_user_11",
+      "password": "Nf$h9bB#sF"
+    },
+    {
+      "num": 12,
+      "username": "quiz9_user_12",
+      "password": "MTVNnde$eZ"
+    },
+    {
+      "num": 13,
+      "username": "quiz9_user_13",
+      "password": "#s@aEseyf@"
+    },
+    {
+      "num": 14,
+      "username": "quiz9_user_14",
+      "password": "MrvfmBNCGF"
+    },
+    {
+      "num": 15,
+      "username": "quiz9_user_15",
+      "password": "3Cv49@CgBJ"
+    },
+    {
+      "num": 16,
+      "username": "quiz9_user_16",
+      "password": "cq!VqdzMaZ"
+    },
+    {
+      "num": 17,
+      "username": "quiz9_user_17",
+      "password": "FBx@KcgiFu"
+    },
+    {
+      "num": 18,
+      "username": "quiz9_user_18",
+      "password": "vD7zT%RAHw"
+    },
+    {
+      "num": 19,
+      "username": "quiz9_user_19",
+      "password": "7UtJ@Y3@it"
+    },
+    {
+      "num": 20,
+      "username": "quiz9_user_20",
+      "password": "!KRV#XWhi3"
+    },
+    {
+      "num": 21,
+      "username": "quiz9_user_21",
+      "password": "GezLkURPGN"
+    },
+    {
+      "num": 22,
+      "username": "quiz9_user_22",
+      "password": "$Nr77bTs$N"
+    },
+    {
+      "num": 23,
+      "username": "quiz9_user_23",
+      "password": "X58uXXuZyn"
+    },
+    {
+      "num": 24,
+      "username": "quiz9_user_24",
+      "password": "APwp8Btvnu"
+    },
+    {
+      "num": 25,
+      "username": "quiz9_user_25",
+      "password": "nxYPvUViL6"
+    }
+  ],
+  "10": [
+    {
+      "num": 1,
+      "username": "quiz10_user_01",
+      "password": "VvdDr5Rypb"
+    },
+    {
+      "num": 2,
+      "username": "quiz10_user_02",
+      "password": "TD66i#iAdJ"
+    },
+    {
+      "num": 3,
+      "username": "quiz10_user_03",
+      "password": "V!DWD$ED7R"
+    },
+    {
+      "num": 4,
+      "username": "quiz10_user_04",
+      "password": "X%qfrUGme$"
+    },
+    {
+      "num": 5,
+      "username": "quiz10_user_05",
+      "password": "UZatPVBC!X"
+    },
+    {
+      "num": 6,
+      "username": "quiz10_user_06",
+      "password": "gDB3Gvzamn"
+    },
+    {
+      "num": 7,
+      "username": "quiz10_user_07",
+      "password": "AUtkDKTzYm"
+    },
+    {
+      "num": 8,
+      "username": "quiz10_user_08",
+      "password": "wXaTTcs4$L"
+    },
+    {
+      "num": 9,
+      "username": "quiz10_user_09",
+      "password": "xs5Hh6RAzq"
+    },
+    {
+      "num": 10,
+      "username": "quiz10_user_10",
+      "password": "bKs2ujysdz"
+    },
+    {
+      "num": 11,
+      "username": "quiz10_user_11",
+      "password": "f!c#v35g7m"
+    },
+    {
+      "num": 12,
+      "username": "quiz10_user_12",
+      "password": "tXXuMUxb8n"
+    },
+    {
+      "num": 13,
+      "username": "quiz10_user_13",
+      "password": "eYCJJH@65C"
+    },
+    {
+      "num": 14,
+      "username": "quiz10_user_14",
+      "password": "2DKGCAwGMF"
+    },
+    {
+      "num": 15,
+      "username": "quiz10_user_15",
+      "password": "DuPUUVvxb#"
+    },
+    {
+      "num": 16,
+      "username": "quiz10_user_16",
+      "password": "YxSXYUSs6d"
+    },
+    {
+      "num": 17,
+      "username": "quiz10_user_17",
+      "password": "mT!wpdDruN"
+    },
+    {
+      "num": 18,
+      "username": "quiz10_user_18",
+      "password": "jtKbtL8pyA"
+    },
+    {
+      "num": 19,
+      "username": "quiz10_user_19",
+      "password": "pLmBrvx5T%"
+    },
+    {
+      "num": 20,
+      "username": "quiz10_user_20",
+      "password": "CEcEZAyZxu"
+    },
+    {
+      "num": 21,
+      "username": "quiz10_user_21",
+      "password": "!$Dw!v2UvE"
+    },
+    {
+      "num": 22,
+      "username": "quiz10_user_22",
+      "password": "L@td%TQxqb"
+    },
+    {
+      "num": 23,
+      "username": "quiz10_user_23",
+      "password": "QcwJu$Ay3F"
+    },
+    {
+      "num": 24,
+      "username": "quiz10_user_24",
+      "password": "w$dLVmbkwH"
+    },
+    {
+      "num": 25,
+      "username": "quiz10_user_25",
+      "password": "aTVuX%m7uk"
+    }
+  ]
+};
+
+    let activeLab = 1;
+
+    async function sha256(str) {
+      const buf = new TextEncoder().encode(str);
+      const digest = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Local Storage helpers for tracking used accounts per interviewer
+    function getUsedStore() {
+      try {
+        return JSON.parse(localStorage.getItem('devops_assigned_creds') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function isUsed(username) {
+      const store = getUsedStore();
+      return !!store[username];
+    }
+
+    function toggleUsed(username) {
+      const store = getUsedStore();
+      if (store[username]) {
+        delete store[username];
+      } else {
+        store[username] = new Date().toISOString();
+      }
+      localStorage.setItem('devops_assigned_creds', JSON.stringify(store));
+      renderTable();
+      updateStats();
+    }
+
+    function resetLabUsed(labNum) {
+      if (!confirm(`Reset all assigned credentials for Quiz Set ${labNum} back to Available?`)) return;
+      const store = getUsedStore();
+      const list = ALL_CREDS[labNum] || [];
+      list.forEach(item => {
+        delete store[item.username];
+      });
+      localStorage.setItem('devops_assigned_creds', JSON.stringify(store));
+      renderTable();
+      updateStats();
+      showToast(`Quiz Set ${labNum} reset to Available`);
+    }
+
+    // Auth gate check
+    const authOverlay = document.getElementById('auth-overlay');
+    const mainContent = document.getElementById('main-content');
+    const authForm = document.getElementById('auth-form');
+    const masterInput = document.getElementById('master-input');
+    const authErr = document.getElementById('auth-err');
+    const btnLogout = document.getElementById('btn-logout');
+
+    function checkSession() {
+      if (sessionStorage.getItem('examiner_authenticated') === 'true') {
+        authOverlay.style.display = 'none';
+        mainContent.style.display = 'block';
+        initDashboard();
+      } else {
+        authOverlay.style.display = 'flex';
+        mainContent.style.display = 'none';
+        masterInput.value = '';
+        masterInput.focus();
+      }
+    }
+
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const val = masterInput.value.trim();
+      const h = await sha256(val);
+      if (h === HASH_1 || h === HASH_2) {
+        sessionStorage.setItem('examiner_authenticated', 'true');
+        checkSession();
+      } else {
+        authErr.textContent = 'Incorrect passphrase. Please try again.';
+        masterInput.value = '';
+        masterInput.focus();
+      }
+    });
+
+    btnLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('examiner_authenticated');
+      checkSession();
+    });
+
+    // Dashboard Tabs
+    function renderTabs() {
+      const tabsWrap = document.getElementById('tabs-container');
+      tabsWrap.innerHTML = '';
+      for (let q = 1; q <= 10; q++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tab-btn' + (q === activeLab ? ' active' : '');
+        btn.textContent = `Quiz Set ${q}`;
+        btn.onclick = () => {
+          activeLab = q;
+          renderTabs();
+          updateOverview();
+          renderTable();
+          updateStats();
+        };
+        tabsWrap.appendChild(btn);
+      }
+    }
+
+    function updateOverview() {
+      const title = document.getElementById('current-lab-title');
+      const sub = document.getElementById('current-lab-sub');
+      const directLink = document.getElementById('current-lab-link');
+
+      title.textContent = `Quiz Set ${activeLab}`;
+      sub.textContent = `16 Questions: 10 Linux Admin MCQs + 6 Technical Challenges`;
+      const url = `quiz_set_${activeLab}.html`;
+      directLink.href = url;
+    }
+
+    function updateStats() {
+      const list = ALL_CREDS[activeLab] || [];
+      let usedCount = 0;
+      list.forEach(c => {
+        if (isUsed(c.username)) usedCount++;
+      });
+      const availCount = list.length - usedCount;
+
+      document.getElementById('stat-avail-count').textContent = `${availCount} Available`;
+      document.getElementById('stat-used-count').textContent = `${usedCount} Assigned`;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('creds-tbody');
+      tbody.innerHTML = '';
+      const filter = document.getElementById('filter-search').value.toLowerCase().trim();
+
+      const list = ALL_CREDS[activeLab] || [];
+      const origin = window.location.origin;
+      const pathname = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+      const quizUrl = `${origin}${pathname}/quiz_set_${activeLab}.html`;
+
+      list.forEach(item => {
+        const used = isUsed(item.username);
+        const searchTarget = `${item.username} ${used ? 'used assigned' : 'available'}`.toLowerCase();
+        if (filter && !searchTarget.includes(filter)) return;
+
+        const tr = document.createElement('tr');
+        if (used) tr.className = 'is-used';
+
+        tr.innerHTML = `
+          <td>${item.num}</td>
+          <td class="mono user-cell"><strong>${item.username}</strong></td>
+          <td class="mono">${item.password}</td>
+          <td>
+            <span class="badge-status ${used ? 'badge-used' : 'badge-available'}">
+              ${used ? 'Assigned' : 'Available'}
+            </span>
+          </td>
+          <td>
+            <div class="action-group">
+              <button type="button" class="btn-copy" onclick="copyInvite(${activeLab}, '${item.username}', '${item.password}', '${quizUrl}')">
+                &#128203; Copy Invite
+              </button>
+              <button type="button" class="btn-toggle-used" onclick="toggleUsed('${item.username}')">
+                ${used ? 'Mark Available' : 'Mark Used'}
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function copyInvite(labNum, username, password, quizUrl) {
+      const message = 
+`--------------------------------------------------
+DevOps Technical Assessment - Candidate Access
+--------------------------------------------------
+Assessment: Quiz Set ${labNum} (16 Questions)
+Direct Assessment URL: ${quizUrl}
+
+Candidate Username: ${username}
+Session Password:   ${password}
+
+Instructions:
+1. Open the URL above and enter your credentials.
+2. All 16 questions are mandatory (10 Linux MCQs + 6 Challenges).
+3. Do NOT refresh (F5) the page during the exam (auto-logout clears unsaved work).
+4. Submitting automatically generates and downloads your PDF report.
+--------------------------------------------------`;
+
+      navigator.clipboard.writeText(message).then(() => {
+        // Automatically mark as used when copied to avoid double-assignment
+        if (!isUsed(username)) {
+          toggleUsed(username);
+        }
+        showToast(`Copied invite for ${username} & marked as assigned!`);
+      }).catch(() => {
+        showToast('Failed to copy. Please copy manually.');
+      });
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      const msg = document.getElementById('toast-msg');
+      msg.textContent = text;
+      t.classList.add('show');
+      setTimeout(() => {
+        t.classList.remove('show');
+      }, 3200);
+    }
+
+    document.getElementById('filter-search').addEventListener('input', () => {
+      renderTable();
+    });
+
+    document.getElementById('btn-reset-lab').addEventListener('click', () => {
+      resetLabUsed(activeLab);
+    });
+
+    function initDashboard() {
+      renderTabs();
+      updateOverview();
+      renderTable();
+      updateStats();
+    }
+
+    // Initial check
+    checkSession();
+  </script>
+</body>
+</html>
