@@ -1,4 +1,3 @@
-# Ignore sensitive credentials
-CREDENTIALS.md
+# Ignore sensitive local files
 *.env
 users.json
