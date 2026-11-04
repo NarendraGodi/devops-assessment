@@ -1155,8 +1155,9 @@ Example line: &#039;192.168.1.1 - - [04/Nov/2026] &quot;GET /api/v1/health HTTP/
       const user = authUsername.value.trim();
       const pass = authPassword.value.trim();
 
-      const userHashes = window.ACTIVE_USER_HASHES || {};
-      const expectedHash = userHashes[user];
+      const currentQuizNum = 6;
+      const quizHashes = (window.QUIZ_CREDENTIALS && window.QUIZ_CREDENTIALS[currentQuizNum]) || {};
+      const expectedHash = quizHashes[user];
 
       if (expectedHash) {
         const inputHash = await sha256(pass);
@@ -1171,7 +1172,22 @@ Example line: &#039;192.168.1.1 - - [04/Nov/2026] &quot;GET /api/v1/health HTTP/
         }
       }
 
-      loginErrorMsg.textContent = 'Invalid credentials or access revoked.';
+      // Check if candidate is attempting to use credentials from another quiz
+      let otherQuiz = null;
+      if (window.QUIZ_CREDENTIALS) {
+        for (let checkQ = 1; checkQ <= 6; checkQ++) {
+          if (checkQ !== currentQuizNum && window.QUIZ_CREDENTIALS[checkQ] && window.QUIZ_CREDENTIALS[checkQ][user]) {
+            otherQuiz = checkQ;
+            break;
+          }
+        }
+      }
+
+      if (otherQuiz) {
+        loginErrorMsg.textContent = `Access Denied: This credential is for Quiz ${otherQuiz} and cannot unlock Quiz 6.`;
+      } else {
+        loginErrorMsg.textContent = 'Invalid credentials or access revoked for Quiz 6.';
+      }
       authPassword.value = '';
       authPassword.focus();
     });

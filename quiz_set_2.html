@@ -1158,8 +1158,9 @@ After success: build Docker image and push to Docker Hub.</div>
       const user = authUsername.value.trim();
       const pass = authPassword.value.trim();
 
-      const userHashes = window.ACTIVE_USER_HASHES || {};
-      const expectedHash = userHashes[user];
+      const currentQuizNum = 2;
+      const quizHashes = (window.QUIZ_CREDENTIALS && window.QUIZ_CREDENTIALS[currentQuizNum]) || {};
+      const expectedHash = quizHashes[user];
 
       if (expectedHash) {
         const inputHash = await sha256(pass);
@@ -1174,7 +1175,22 @@ After success: build Docker image and push to Docker Hub.</div>
         }
       }
 
-      loginErrorMsg.textContent = 'Invalid credentials or access revoked.';
+      // Check if candidate is attempting to use credentials from another quiz
+      let otherQuiz = null;
+      if (window.QUIZ_CREDENTIALS) {
+        for (let checkQ = 1; checkQ <= 6; checkQ++) {
+          if (checkQ !== currentQuizNum && window.QUIZ_CREDENTIALS[checkQ] && window.QUIZ_CREDENTIALS[checkQ][user]) {
+            otherQuiz = checkQ;
+            break;
+          }
+        }
+      }
+
+      if (otherQuiz) {
+        loginErrorMsg.textContent = `Access Denied: This credential is for Quiz ${otherQuiz} and cannot unlock Quiz 2.`;
+      } else {
+        loginErrorMsg.textContent = 'Invalid credentials or access revoked for Quiz 2.';
+      }
       authPassword.value = '';
       authPassword.focus();
     });
