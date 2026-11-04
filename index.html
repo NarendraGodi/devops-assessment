@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevOps Technical Assessment Portal</title>
+  <title>DevOps Technical Assessment</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -11,9 +11,6 @@
       --border: #e2e8f0;
       --text: #0f172a;
       --text-muted: #64748b;
-      --primary: #0284c7;
-      --primary-hover: #0369a1;
-      --accent: #0ea5e9;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,17 +20,17 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      padding: 40px 20px 80px;
+      padding: 48px 20px 80px;
     }
 
     .container {
-      max-width: 1040px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 44px;
     }
 
     .portal-badge {
@@ -61,134 +58,129 @@
     p.subtitle {
       color: var(--text-muted);
       font-size: 1.05rem;
-      max-width: 620px;
+      max-width: 580px;
       margin: 0 auto;
     }
 
     .quiz-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 22px;
     }
 
-    .quiz-card {
-      background: var(--card);
-      border: 1px solid var(--border);
+    .quiz-tile {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 26px;
-      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+      padding: 30px 24px;
+      text-decoration: none;
+      color: inherit;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      min-height: 190px;
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
 
-    .quiz-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.12);
-      border-color: #94a3b8;
+    .quiz-tile:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.09);
     }
 
-    .card-top {
-      margin-bottom: 20px;
+    /* Top color accent strip on each tile */
+    .quiz-tile::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
     }
 
-    .card-header {
+    /* Color Themes for each tile */
+    .tile-1::before { background: #0284c7; }
+    .tile-1:hover { border-color: #0284c7; }
+    .tile-1 .tile-num { color: #0284c7; background: #e0f2fe; }
+
+    .tile-2::before { background: #059669; }
+    .tile-2:hover { border-color: #059669; }
+    .tile-2 .tile-num { color: #059669; background: #d1fae5; }
+
+    .tile-3::before { background: #7c3aed; }
+    .tile-3:hover { border-color: #7c3aed; }
+    .tile-3 .tile-num { color: #7c3aed; background: #ede9fe; }
+
+    .tile-4::before { background: #d97706; }
+    .tile-4:hover { border-color: #d97706; }
+    .tile-4 .tile-num { color: #d97706; background: #fef3c7; }
+
+    .tile-5::before { background: #0891b2; }
+    .tile-5:hover { border-color: #0891b2; }
+    .tile-5 .tile-num { color: #0891b2; background: #cffafe; }
+
+    .tile-6::before { background: #e11d48; }
+    .tile-6:hover { border-color: #e11d48; }
+    .tile-6 .tile-num { color: #e11d48; background: #ffe4e6; }
+
+    .tile-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
-    .set-tag {
-      font-size: 0.75rem;
+    .tile-num {
+      font-size: 0.76rem;
       font-weight: 700;
-      color: #0369a1;
-      background: #e0f2fe;
       padding: 3px 10px;
       border-radius: 9999px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .q-count {
-      font-size: 0.8rem;
+    .tile-badge {
+      font-size: 0.78rem;
       color: var(--text-muted);
       font-weight: 600;
     }
 
-    .card-title {
-      font-size: 1.25rem;
+    .tile-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .tile-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .tile-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.92rem;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 8px;
+      margin-top: 22px;
     }
 
-    .card-desc {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .topic-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      font-size: 0.86rem;
-      color: #334155;
-      background: #f8fafc;
-      padding: 12px 14px;
-      border-radius: 8px;
-      border: 1px solid #f1f5f9;
-    }
-
-    .topic-list li {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .topic-list li::before {
-      content: "•";
-      color: #0284c7;
-      font-size: 1.2rem;
-      line-height: 1;
-    }
-
-    .btn-start {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background: var(--primary);
-      color: #ffffff;
-      text-decoration: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      transition: background 0.2s;
-      margin-top: 20px;
-    }
-
-    .btn-start:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-start span.arrow {
+    .tile-action span.arrow {
       transition: transform 0.2s;
     }
 
-    .btn-start:hover span.arrow {
-      transform: translateX(3px);
+    .quiz-tile:hover .tile-action span.arrow {
+      transform: translateX(4px);
     }
 
     footer {
       text-align: center;
-      margin-top: 50px;
+      margin-top: 55px;
       font-size: 0.85rem;
       color: #94a3b8;
     }
@@ -199,154 +191,109 @@
   <div class="container">
     <header>
       <div class="portal-badge">DevOps Technical Assessment</div>
-      <h1>Candidate Assessment Portal</h1>
-      <p class="subtitle">Select your assigned assessment set to proceed. You will be prompted to enter your candidate verification credentials to unlock the questions.</p>
+      <h1>Assessment Portal</h1>
+      <p class="subtitle">Please select your assigned quiz to begin. You will be prompted to enter your credentials.</p>
     </header>
 
     <div class="quiz-grid">
-      <!-- Quiz Set 1 -->
-      <div class="quiz-card">
-        <div class="card-top">
-          <div class="card-header">
-            <span class="set-tag">Quiz Set 1</span>
-            <span class="q-count">15 Questions</span>
+      <!-- Quiz 1 -->
+      <a href="quiz_set_1.html" class="quiz-tile tile-1">
+        <div>
+          <div class="tile-top">
+            <span class="tile-num">Set 1</span>
+            <span class="tile-badge">15 Questions</span>
           </div>
-          <h2 class="card-title">Core Linux & Automation</h2>
-          <p class="card-desc">Kernel, disk, memory diagnostics, S3 Terraform automation, and remote SSH error aggregation.</p>
-          <ul class="topic-list">
-            <li>10 Linux Admin MCQs</li>
-            <li>Bash: Remote Host Log Error Count</li>
-            <li>Python: Odd Number Filter & Square</li>
-            <li>CI/CD: GitHub Actions Branch Deploy</li>
-            <li>Kubernetes: ErrImagePull Triage</li>
-            <li>Terraform: Multi-Bucket S3 for_each</li>
-          </ul>
+          <h2 class="tile-title">Quiz 1</h2>
+          <p class="tile-sub">Technical Assessment</p>
         </div>
-        <a href="quiz_set_1.html" class="btn-start">
-          Start Quiz Set 1 <span class="arrow">&rarr;</span>
-        </a>
-      </div>
+        <div class="tile-action">
+          Start Quiz 1 <span class="arrow">&rarr;</span>
+        </div>
+      </a>
 
-      <!-- Quiz Set 2 -->
-      <div class="quiz-card">
-        <div class="card-top">
-          <div class="card-header">
-            <span class="set-tag">Quiz Set 2</span>
-            <span class="q-count">15 Questions</span>
+      <!-- Quiz 2 -->
+      <a href="quiz_set_2.html" class="quiz-tile tile-2">
+        <div>
+          <div class="tile-top">
+            <span class="tile-num">Set 2</span>
+            <span class="tile-badge">15 Questions</span>
           </div>
-          <h2 class="card-title">Storage, DNS & Ingress</h2>
-          <p class="card-desc">fstab mounts, file comparison, Cron scheduling, Docker container health, and Ingress routing.</p>
-          <ul class="topic-list">
-            <li>10 Linux Admin MCQs</li>
-            <li>Bash: Remote Docker Health Check</li>
-            <li>Python: Find Missing Number (1..N)</li>
-            <li>CI/CD: Actions Python Matrix & Docker Push</li>
-            <li>Kubernetes: Ingress vs Ingress Controller</li>
-            <li>Terraform: Resource Input Validation</li>
-          </ul>
+          <h2 class="tile-title">Quiz 2</h2>
+          <p class="tile-sub">Technical Assessment</p>
         </div>
-        <a href="quiz_set_2.html" class="btn-start">
-          Start Quiz Set 2 <span class="arrow">&rarr;</span>
-        </a>
-      </div>
+        <div class="tile-action">
+          Start Quiz 2 <span class="arrow">&rarr;</span>
+        </div>
+      </a>
 
-      <!-- Quiz Set 3 -->
-      <div class="quiz-card">
-        <div class="card-top">
-          <div class="card-header">
-            <span class="set-tag">Quiz Set 3</span>
-            <span class="q-count">15 Questions</span>
+      <!-- Quiz 3 -->
+      <a href="quiz_set_3.html" class="quiz-tile tile-3">
+        <div>
+          <div class="tile-top">
+            <span class="tile-num">Set 3</span>
+            <span class="tile-badge">15 Questions</span>
           </div>
-          <h2 class="card-title">Sysadmin Triage & Inodes</h2>
-          <p class="card-desc">Inodes, LVM storage, VM slow performance triage, Zombie processes, and Headless services.</p>
-          <ul class="topic-list">
-            <li>10 Linux Admin MCQs</li>
-            <li>Bash: Separate stdout & stderr Variables</li>
-            <li>Python: Reverse an Integer</li>
-            <li>CI/CD: Jenkins Scripted vs Declarative</li>
-            <li>Kubernetes: Headless Services & DNS</li>
-            <li>Terraform: Data Sources & State Import</li>
-          </ul>
+          <h2 class="tile-title">Quiz 3</h2>
+          <p class="tile-sub">Technical Assessment</p>
         </div>
-        <a href="quiz_set_3.html" class="btn-start">
-          Start Quiz Set 3 <span class="arrow">&rarr;</span>
-        </a>
-      </div>
+        <div class="tile-action">
+          Start Quiz 3 <span class="arrow">&rarr;</span>
+        </div>
+      </a>
 
-      <!-- Quiz Set 4 -->
-      <div class="quiz-card">
-        <div class="card-top">
-          <div class="card-header">
-            <span class="set-tag">Quiz Set 4</span>
-            <span class="q-count">15 Questions</span>
+      <!-- Quiz 4 -->
+      <a href="quiz_set_4.html" class="quiz-tile tile-4">
+        <div>
+          <div class="tile-top">
+            <span class="tile-num">Set 4</span>
+            <span class="tile-badge">15 Questions</span>
           </div>
-          <h2 class="card-title">Networking, DORA & K8s</h2>
-          <p class="card-desc">TCP/UDP, regex search, DORA metrics, swap space, pod requests vs limits, and bash pipefail.</p>
-          <ul class="topic-list">
-            <li>10 Linux Admin MCQs</li>
-            <li>Bash: set -e, set -u, set -o pipefail</li>
-            <li>Python: Binary Search on Sorted Array</li>
-            <li>CI/CD: Jenkins Multi-Node & Docker Agent</li>
-            <li>Kubernetes: Pod Requests, Limits, OOMKilled</li>
-            <li>Terraform: State Locking & Remote Backends</li>
-          </ul>
+          <h2 class="tile-title">Quiz 4</h2>
+          <p class="tile-sub">Technical Assessment</p>
         </div>
-        <a href="quiz_set_4.html" class="btn-start">
-          Start Quiz Set 4 <span class="arrow">&rarr;</span>
-        </a>
-      </div>
+        <div class="tile-action">
+          Start Quiz 4 <span class="arrow">&rarr;</span>
+        </div>
+      </a>
 
-      <!-- Quiz Set 5 -->
-      <div class="quiz-card">
-        <div class="card-top">
-          <div class="card-header">
-            <span class="set-tag">Quiz Set 5</span>
-            <span class="q-count">15 Questions</span>
+      <!-- Quiz 5 -->
+      <a href="quiz_set_5.html" class="quiz-tile tile-5">
+        <div>
+          <div class="tile-top">
+            <span class="tile-num">Set 5</span>
+            <span class="tile-badge">15 Questions</span>
           </div>
-          <h2 class="card-title">Ansible, Docker & Logs</h2>
-          <p class="card-desc">PIPESTATUS, Ansible vars, Google SRE golden signals, Docker commands, and EFK log shipping.</p>
-          <ul class="topic-list">
-            <li>10 Linux Admin MCQs</li>
-            <li>Bash: Concurrency Lock Mechanism</li>
-            <li>Python: IP Address Frequency Counter</li>
-            <li>CI/CD: Automated Rollback on Health Failure</li>
-            <li>Kubernetes: Fluentd vs Fluent Bit & EFK</li>
-            <li>Terraform: count vs for_each Refactoring</li>
-          </ul>
+          <h2 class="tile-title">Quiz 5</h2>
+          <p class="tile-sub">Technical Assessment</p>
         </div>
-        <a href="quiz_set_5.html" class="btn-start">
-          Start Quiz Set 5 <span class="arrow">&rarr;</span>
-        </a>
-      </div>
+        <div class="tile-action">
+          Start Quiz 5 <span class="arrow">&rarr;</span>
+        </div>
+      </a>
 
-      <!-- Quiz Set 6 -->
-      <div class="quiz-card">
-        <div class="card-top">
-          <div class="card-header">
-            <span class="set-tag">Quiz Set 6</span>
-            <span class="q-count">15 Questions</span>
+      <!-- Quiz 6 -->
+      <a href="quiz_set_6.html" class="quiz-tile tile-6">
+        <div>
+          <div class="tile-top">
+            <span class="tile-num">Set 6</span>
+            <span class="tile-badge">15 Questions</span>
           </div>
-          <h2 class="card-title">Cloud IAM & Architecture</h2>
-          <p class="card-desc">GCP IAP SSH, bucket IAM permissions, control plane architecture, and rolling update playbooks.</p>
-          <ul class="topic-list">
-            <li>10 Linux Admin MCQs</li>
-            <li>Bash: Directory File Modification Monitor</li>
-            <li>Python: Access Log HTTP Status Code Parser</li>
-            <li>CI/CD: Ansible Zero-Downtime Rolling Update</li>
-            <li>Kubernetes: Control Plane Architecture</li>
-            <li>Terraform: Lifecycle create_before_destroy</li>
-          </ul>
+          <h2 class="tile-title">Quiz 6</h2>
+          <p class="tile-sub">Technical Assessment</p>
         </div>
-        <a href="quiz_set_6.html" class="btn-start">
-          Start Quiz Set 6 <span class="arrow">&rarr;</span>
-        </a>
-      </div>
+        <div class="tile-action">
+          Start Quiz 6 <span class="arrow">&rarr;</span>
+        </div>
+      </a>
     </div>
 
-    <footer>
-      DevOps Technical Assessment Platform &bull; Submissions generate downloadable candidate PDFs
+    
+    <footer style="text-align: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid #e2e8f0; font-size: 0.9rem; color: #64748b;">
+      <div>DevOps Technical Assessment Portal &bull; Automated Session Management</div>
+      <div style="display: inline-block; margin-top: 10px; font-weight: 700; color: #0284c7; background: #e0f2fe; padding: 5px 16px; border-radius: 9999px; border: 1px solid #bae6fd; font-size: 0.85rem;">
+        Designed by Narendra Godi
+      </div>
     </footer>
   </div>
-
 </body>
 </html>
