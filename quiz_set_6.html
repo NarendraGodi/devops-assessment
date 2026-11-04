@@ -1067,16 +1067,16 @@ Example line: &#039;192.168.1.1 - - [04/Nov/2026] &quot;GET /api/v1/health HTTP/
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">14. Kubernetes Challenge: Kubernetes Architecture &amp; Request Flow</span>
+          <span class="q-text">14. Kubernetes Challenge: Secrets Mounting & Horizontal Pod Autoscaler (HPA)</span>
           <span class="q-tag tag-k8s">Kubernetes Challenge</span>
         </div>
-        <div class="q-desc">Explain the Kubernetes Architecture (Master and Worker node components). Describe what happens under the hood when a deployment manifest is applied.</div>
+        <div class="q-desc">Write a Kubernetes YAML manifest in namespace 'monitoring' that creates: 1) A Secret named 'db-credentials' with keys 'username' and 'password' (base64 encoded). 2) A Deployment named 'analytics-engine' (image: 'analytics:latest', 2 replicas) mounting the Secret as individual environment variables (DB_USER and DB_PASS). 3) A HorizontalPodAutoscaler (HPA) targeting this deployment to scale between 2 and 10 replicas when CPU utilization exceeds 75%.</div>
         <div class="answer-box-wrap">
           <div class="answer-header-line">
             <span class="answer-tag">Answer</span>
             <span class="answer-line"></span>
           </div>
-          <textarea name="q14" class="answer-textarea " required></textarea>
+          <textarea name="q14" class="answer-textarea code-font" required></textarea>
         </div>
       </div>
     
@@ -1265,9 +1265,9 @@ Example line: &#039;192.168.1.1 - - [04/Nov/2026] &quot;GET /api/v1/health HTTP/
   {
     "id": "q14",
     "category": "Kubernetes Challenge",
-    "title": "14. Kubernetes Challenge: Kubernetes Architecture & Request Flow",
+    "title": "14. Kubernetes Challenge: Secrets Mounting & Horizontal Pod Autoscaler (HPA)",
     "type": "text",
-    "desc": "Explain the Kubernetes Architecture (Master and Worker node components). Describe what happens under the hood when a deployment manifest is applied."
+    "desc": "Write a Kubernetes YAML manifest in namespace 'monitoring' that creates: 1) A Secret named 'db-credentials' with keys 'username' and 'password' (base64 encoded). 2) A Deployment named 'analytics-engine' (image: 'analytics:latest', 2 replicas) mounting the Secret as individual environment variables (DB_USER and DB_PASS). 3) A HorizontalPodAutoscaler (HPA) targeting this deployment to scale between 2 and 10 replicas when CPU utilization exceeds 75%."
   },
   {
     "id": "q15",

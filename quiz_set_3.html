@@ -1067,16 +1067,16 @@ Can you create an environment variable in one stage and pass it on to another st
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">14. Kubernetes Challenge: Headless Service in Kubernetes</span>
+          <span class="q-text">14. Kubernetes Challenge: ConfigMap Injection into Deployment</span>
           <span class="q-tag tag-k8s">Kubernetes Challenge</span>
         </div>
-        <div class="q-desc">What is a headless service in Kubernetes, how does DNS resolution work for it, and when should you use it?</div>
+        <div class="q-desc">Write a Kubernetes YAML manifest that defines: 1) A ConfigMap named 'app-config' in namespace 'ecommerce' with keys DB_HOST: 'postgres.internal' and APP_ENV: 'production'. 2) A Deployment named 'order-service' (image: 'node:18-alpine', 2 replicas) that injects all keys from this ConfigMap as environment variables into the container.</div>
         <div class="answer-box-wrap">
           <div class="answer-header-line">
             <span class="answer-tag">Answer</span>
             <span class="answer-line"></span>
           </div>
-          <textarea name="q14" class="answer-textarea " required></textarea>
+          <textarea name="q14" class="answer-textarea code-font" required></textarea>
         </div>
       </div>
     
@@ -1266,9 +1266,9 @@ What is &#039;terraform import&#039; and when do you use it?</div>
   {
     "id": "q14",
     "category": "Kubernetes Challenge",
-    "title": "14. Kubernetes Challenge: Headless Service in Kubernetes",
+    "title": "14. Kubernetes Challenge: ConfigMap Injection into Deployment",
     "type": "text",
-    "desc": "What is a headless service in Kubernetes, how does DNS resolution work for it, and when should you use it?"
+    "desc": "Write a Kubernetes YAML manifest that defines: 1) A ConfigMap named 'app-config' in namespace 'ecommerce' with keys DB_HOST: 'postgres.internal' and APP_ENV: 'production'. 2) A Deployment named 'order-service' (image: 'node:18-alpine', 2 replicas) that injects all keys from this ConfigMap as environment variables into the container."
   },
   {
     "id": "q15",

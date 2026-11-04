@@ -1070,16 +1070,16 @@ After success: build Docker image and push to Docker Hub.</div>
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">14. Kubernetes Challenge: Ingress vs Ingress Controller &amp; L4/L7 Routing</span>
+          <span class="q-text">14. Kubernetes Challenge: Namespace, Deployment & NodePort Service</span>
           <span class="q-tag tag-k8s">Kubernetes Challenge</span>
         </div>
-        <div class="q-desc">What is the difference between an ingress and an ingress controller in Kubernetes? Also explain the difference between a Layer 7 load balancer and a Layer 4 load balancer.</div>
+        <div class="q-desc">Write a Kubernetes manifest (YAML) that creates a Deployment named 'backend-api' (image: 'python:3.11-slim', 2 replicas, containerPort: 5000) in namespace 'staging'. Expose this deployment to external traffic using a NodePort Service named 'backend-service' (port: 5000, targetPort: 5000, nodePort: 31500). Ensure selector labels match properly between Service and Pod template.</div>
         <div class="answer-box-wrap">
           <div class="answer-header-line">
             <span class="answer-tag">Answer</span>
             <span class="answer-line"></span>
           </div>
-          <textarea name="q14" class="answer-textarea " required></textarea>
+          <textarea name="q14" class="answer-textarea code-font" required></textarea>
         </div>
       </div>
     
@@ -1268,9 +1268,9 @@ After success: build Docker image and push to Docker Hub.</div>
   {
     "id": "q14",
     "category": "Kubernetes Challenge",
-    "title": "14. Kubernetes Challenge: Ingress vs Ingress Controller & L4/L7 Routing",
+    "title": "14. Kubernetes Challenge: Namespace, Deployment & NodePort Service",
     "type": "text",
-    "desc": "What is the difference between an ingress and an ingress controller in Kubernetes? Also explain the difference between a Layer 7 load balancer and a Layer 4 load balancer."
+    "desc": "Write a Kubernetes manifest (YAML) that creates a Deployment named 'backend-api' (image: 'python:3.11-slim', 2 replicas, containerPort: 5000) in namespace 'staging'. Expose this deployment to external traffic using a NodePort Service named 'backend-service' (port: 5000, targetPort: 5000, nodePort: 31500). Ensure selector labels match properly between Service and Pod template."
   },
   {
     "id": "q15",
