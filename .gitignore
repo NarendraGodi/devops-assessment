@@ -1,0 +1,4 @@
+# Ignore sensitive credentials
+CREDENTIALS.md
+*.env
+users.json

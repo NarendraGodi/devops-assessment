@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Technical Assessment — Quiz Set 3</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Active Candidate Credentials -->
+  <script src="users.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --error: #dc2626;
+      --success: #16a34a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 16px 60px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 22px;
+      margin-bottom: 26px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      color: #0369a1;
+      font-weight: 700;
+    }
+
+    .badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 28px 0 16px;
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .grid-row { grid-template-columns: 1fr; }
+      .container { padding: 20px 16px; }
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    label .req {
+      color: var(--error);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 14px;
+      color: #0f172a;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+    }
+
+    select.quiz-picker {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 12px 14px;
+      cursor: pointer;
+    }
+
+    .question-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 22px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.2s;
+    }
+
+    .question-card:hover {
+      border-color: #94a3b8;
+    }
+
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .q-text {
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .q-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-linux { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .tag-bash { background: #fef9c3; color: #a16207; border: 1px solid #fef08a; }
+    .tag-python { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .tag-cicd { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+    .tag-k8s { background: #cffafe; color: #0e7490; border: 1px solid #a5f3fc; }
+    .tag-tf { background: #fae8ff; color: #a21caf; border: 1px solid #f5d0fe; }
+
+    .q-desc {
+      font-size: 0.86rem;
+      color: #334155;
+      margin-bottom: 14px;
+      white-space: pre-line;
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 6px;
+      border-left: 3px solid #0284c7;
+      border-top: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* MCQ Options Styling */
+    .mcq-options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .mcq-option-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.94rem;
+      color: #1e293b;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .mcq-option-label:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .mcq-option-label input[type="radio"] {
+      width: 17px;
+      height: 17px;
+      accent-color: #0284c7;
+      cursor: pointer;
+    }
+
+    .mcq-option-label:has(input[type="radio"]:checked) {
+      background: #f0f9ff;
+      border-color: #0284c7;
+      font-weight: 500;
+      color: #0369a1;
+    }
+
+    /* Highlighted Answer Box & Line Header for Code/Text Challenges */
+    .answer-box-wrap {
+      margin-top: 14px;
+    }
+
+    .answer-header-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .answer-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0369a1;
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      padding: 2px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .answer-line {
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    textarea.answer-textarea {
+      width: 100%;
+      background: #fcfdfe;
+      border: 1.5px solid #94a3b8;
+      border-left: 4px solid #0284c7;
+      border-radius: 6px;
+      padding: 12px 14px;
+      color: #0f172a;
+      font-size: 0.95rem;
+      outline: none;
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    }
+
+    textarea.answer-textarea:focus {
+      background: #ffffff;
+      border-color: #0284c7;
+      border-left: 4px solid #0369a1;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18), inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    textarea.answer-textarea.code-font {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      background: #f8fafc;
+    }
+
+    button.btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: background 0.2s;
+    }
+
+    button.btn-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #status-msg {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      min-height: 24px;
+    }
+
+    /* Modal Login Gate */
+    #login-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .login-badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .login-header h2 {
+      font-size: 1.45rem;
+      color: #0f172a;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .login-header p {
+      color: #64748b;
+      font-size: 0.88rem;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 13px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn-login:hover {
+      background: #0369a1;
+    }
+
+    #login-error-msg {
+      color: #dc2626;
+      font-size: 0.85rem;
+      font-weight: 600;
+      min-height: 20px;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    .login-notice {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px dashed #e2e8f0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .login-notice span {
+      font-weight: 700;
+      color: #d97706;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- In-Memory Authentication Gate (Auto-Logout on Page Refresh) -->
+  <div id="login-modal-overlay">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-badge">Candidate Verification</div>
+        <h2>DevOps Assessment Login</h2>
+        <p>Enter the interview credentials provided by your examiner to begin.</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="auth-username">Candidate Username <span class="req">*</span></label>
+          <input type="text" id="auth-username" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="auth-password">Session Password <span class="req">*</span></label>
+          <input type="password" id="auth-password" required autocomplete="off">
+        </div>
+        <div id="login-error-msg"></div>
+        <button type="submit" class="btn-login" id="btn-login-submit">Unlock Assessment</button>
+      </form>
+      <div class="login-notice">
+        <span>&#9888; Note:</span> Refreshing the page automatically logs out this session.
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <h1>DevOps Assessment</h1>
+        <span class="badge">Quiz Set 3</span>
+      </div>
+      <p class="subtitle">Enter candidate info and answer all 15 technical questions below (10 MCQs + 5 Challenges). Submitting automatically downloads <code>firstname_lastname_Quiz_Set_3.pdf</code>.</p>
+    </header>
+
+    <form id="assessment-form">
+      <div class="section-title">
+        <span>1. Candidate Information</span>
+      </div>
+
+      <div class="grid-row">
+        <div class="form-group">
+          <label for="firstName">First Name <span class="req">*</span></label>
+          <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name <span class="req">*</span></label>
+          <input type="text" id="lastName" name="lastName" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address <span class="req">*</span></label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="section-title">
+        <span>2. Technical Assessment Questions</span>
+        <span class="section-subtitle">10 Linux Admin (MCQ) + 5 Challenges</span>
+      </div>
+
+      <div id="questions-container">
+        
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">1. How do you extract/filter only the last column of text in Linux shell?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q1" value="awk &#039;{print $NF}&#039; or rev | cut -d&#039; &#039; -f1 | rev" required>
+            <span>awk &#039;{print $NF}&#039; or rev | cut -d&#039; &#039; -f1 | rev</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q1" value="cut -d&#039; &#039; -f1" required>
+            <span>cut -d&#039; &#039; -f1</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q1" value="sed -n &#039;$p&#039;" required>
+            <span>sed -n &#039;$p&#039;</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q1" value="grep -o &#039;$&#039;" required>
+            <span>grep -o &#039;$&#039;</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">2. How do you resolve and extract the IP address from a URL or domain in Linux?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q2" value="dig +short &lt;domain&gt; or getent ahosts &lt;domain&gt; or host &lt;domain&gt;" required>
+            <span>dig +short &lt;domain&gt; or getent ahosts &lt;domain&gt; or host &lt;domain&gt;</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q2" value="curl -O &lt;domain&gt;" required>
+            <span>curl -O &lt;domain&gt;</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q2" value="cat /etc/resolv.conf" required>
+            <span>cat /etc/resolv.conf</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q2" value="route -n" required>
+            <span>route -n</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">3. What is an inode in Linux and what happens when inodes run out while disk space is free?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q3" value="Metadata structure of a file; when exhausted, no new files can be created (&#039;No space left on device&#039;)" required>
+            <span>Metadata structure of a file; when exhausted, no new files can be created (&#039;No space left on device&#039;)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q3" value="The raw data content blocks of a file" required>
+            <span>The raw data content blocks of a file</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q3" value="A network socket descriptor" required>
+            <span>A network socket descriptor</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q3" value="A swap file allocation table" required>
+            <span>A swap file allocation table</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">4. What is LVM (Logical Volume Manager) in Linux?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q4" value="Storage virtualization allowing flexible resizing using Physical Volumes (PV), Volume Groups (VG), and Logical Volumes (LV)" required>
+            <span>Storage virtualization allowing flexible resizing using Physical Volumes (PV), Volume Groups (VG), and Logical Volumes (LV)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q4" value="A cloud synchronization tool that syncs disks to AWS S3" required>
+            <span>A cloud synchronization tool that syncs disks to AWS S3</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q4" value="A hypervisor for managing Kernel-based Virtual Machines" required>
+            <span>A hypervisor for managing Kernel-based Virtual Machines</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q4" value="A legacy filesystem formatting tool" required>
+            <span>A legacy filesystem formatting tool</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">5. If someone says a process running in a VM is slow, what is your initial triage sequence?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q5" value="Check CPU (top/uptime), Memory &amp; OOM (free -m, dmesg), Disk I/O wait (iostat), and network throughput (iftop)" required>
+            <span>Check CPU (top/uptime), Memory &amp; OOM (free -m, dmesg), Disk I/O wait (iostat), and network throughput (iftop)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q5" value="Immediately terminate the process with kill -9" required>
+            <span>Immediately terminate the process with kill -9</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q5" value="Reboot the virtual machine immediately" required>
+            <span>Reboot the virtual machine immediately</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q5" value="Reinstall the operating system" required>
+            <span>Reinstall the operating system</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">6. What is the key difference between Debian and Alpine Linux container base images?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q6" value="Debian uses glibc and apt; Alpine uses lightweight musl libc and apk resulting in tiny image sizes (~5MB)" required>
+            <span>Debian uses glibc and apt; Alpine uses lightweight musl libc and apk resulting in tiny image sizes (~5MB)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q6" value="Alpine is based on RedHat; Debian is based on Arch" required>
+            <span>Alpine is based on RedHat; Debian is based on Arch</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q6" value="Debian cannot run in Docker; Alpine runs only in Docker" required>
+            <span>Debian cannot run in Docker; Alpine runs only in Docker</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q6" value="Alpine does not support TCP networking" required>
+            <span>Alpine does not support TCP networking</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">7. What is a Zombie process (defunct) in Linux and how is it cleaned up?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q7" value="Completed process whose parent hasn&#039;t read its exit status via wait(); cleaned by notifying or killing parent process" required>
+            <span>Completed process whose parent hasn&#039;t read its exit status via wait(); cleaned by notifying or killing parent process</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q7" value="Process infected with malware" required>
+            <span>Process infected with malware</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q7" value="Process consuming 100% CPU in an infinite loop" required>
+            <span>Process consuming 100% CPU in an infinite loop</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q7" value="A daemon running without stdin/stdout" required>
+            <span>A daemon running without stdin/stdout</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">8. What is the difference between a Soft Link (Symlink) and a Hard Link?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q8" value="Soft link points to file path (can cross filesystems); Hard link points to inode (same filesystem only)" required>
+            <span>Soft link points to file path (can cross filesystems); Hard link points to inode (same filesystem only)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q8" value="Hard links break when original file is moved; Soft links never break" required>
+            <span>Hard links break when original file is moved; Soft links never break</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q8" value="Soft link shares identical inode number as target" required>
+            <span>Soft link shares identical inode number as target</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q8" value="Hard links can only link directories" required>
+            <span>Hard links can only link directories</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">9. How do you remove all .tar files recursively from /home/ safely without argument crashes?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q9" value="find /home/ -type f -name &#039;*.tar&#039; -delete (or find ... -print0 | xargs -0 rm -f)" required>
+            <span>find /home/ -type f -name &#039;*.tar&#039; -delete (or find ... -print0 | xargs -0 rm -f)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q9" value="rm -rf /home/*.tar (non-recursive)" required>
+            <span>rm -rf /home/*.tar (non-recursive)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q9" value="tar -xzf /home/*.tar --delete" required>
+            <span>tar -xzf /home/*.tar --delete</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q9" value="unlink /home/*.tar" required>
+            <span>unlink /home/*.tar</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">10. What do the special Bash variables $# and $? represent?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="$# is number of arguments passed; $? is exit status of last executed command (0 = success)" required>
+            <span>$# is number of arguments passed; $? is exit status of last executed command (0 = success)</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="$# is process ID; $? is user ID" required>
+            <span>$# is process ID; $? is user ID</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="$# is background job ID; $? is script file name" required>
+            <span>$# is background job ID; $? is script file name</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="$# is last argument value; $? is first argument value" required>
+            <span>$# is last argument value; $? is first argument value</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">11. Bash Challenge: Separate stdout and stderr into Variables</span>
+          <span class="q-tag tag-bash">Bash Challenge</span>
+        </div>
+        <div class="q-desc">How would you capture both stdout and stderr of a command into separate variables in a Bash script?</div>
+        <div class="answer-box-wrap">
+          <div class="answer-header-line">
+            <span class="answer-tag">Answer</span>
+            <span class="answer-line"></span>
+          </div>
+          <textarea name="q11" class="answer-textarea code-font" required></textarea>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">12. Python Challenge: Reverse a Number</span>
+          <span class="q-tag tag-python">Python Challenge</span>
+        </div>
+        <div class="q-desc">Write a Python function to print/return an integer in reverse order.</div>
+        <div class="answer-box-wrap">
+          <div class="answer-header-line">
+            <span class="answer-tag">Answer</span>
+            <span class="answer-line"></span>
+          </div>
+          <textarea name="q12" class="answer-textarea code-font" required></textarea>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">13. Jenkins Pipeline Challenge: Scripted vs Declarative &amp; Passing Variables</span>
+          <span class="q-tag tag-cicd">CI/CD Challenge</span>
+        </div>
+        <div class="q-desc">What is the difference between Jenkins scripted and declarative pipeline?
+Can you create an environment variable in one stage and pass it on to another stage in a declarative pipeline? Explain or provide snippet.</div>
+        <div class="answer-box-wrap">
+          <div class="answer-header-line">
+            <span class="answer-tag">Answer</span>
+            <span class="answer-line"></span>
+          </div>
+          <textarea name="q13" class="answer-textarea code-font" required></textarea>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">14. Kubernetes Challenge: Headless Service in Kubernetes</span>
+          <span class="q-tag tag-k8s">Kubernetes Challenge</span>
+        </div>
+        <div class="q-desc">What is a headless service in Kubernetes, how does DNS resolution work for it, and when should you use it?</div>
+        <div class="answer-box-wrap">
+          <div class="answer-header-line">
+            <span class="answer-tag">Answer</span>
+            <span class="answer-line"></span>
+          </div>
+          <textarea name="q14" class="answer-textarea " required></textarea>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">15. Terraform Challenge: Data Sources &amp; terraform import</span>
+          <span class="q-tag tag-tf">Terraform Challenge</span>
+        </div>
+        <div class="q-desc">What are data sources in Terraform?
+What is &#039;terraform import&#039; and when do you use it?</div>
+        <div class="answer-box-wrap">
+          <div class="answer-header-line">
+            <span class="answer-tag">Answer</span>
+            <span class="answer-line"></span>
+          </div>
+          <textarea name="q15" class="answer-textarea " required></textarea>
+        </div>
+      </div>
+    
+      </div>
+
+      <button type="submit" class="btn-submit" id="submit-btn">Submit & Download PDF</button>
+      <div id="status-msg"></div>
+    </form>
+  </div>
+
+  <script>
+
+    // In-Memory Authentication Logic (Auto-Logout on Refresh)
+    // In-Memory Authentication Logic (Auto-Logout on Refresh)
+    let isCandidateAuthenticated = false;
+
+    const loginOverlay = document.getElementById('login-modal-overlay');
+    const loginForm = document.getElementById('login-form');
+    const authUsername = document.getElementById('auth-username');
+    const authPassword = document.getElementById('auth-password');
+    const loginErrorMsg = document.getElementById('login-error-msg');
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = authUsername.value.trim();
+      const pass = authPassword.value.trim();
+
+      const userHashes = window.ACTIVE_USER_HASHES || {};
+      const expectedHash = userHashes[user];
+
+      if (expectedHash) {
+        const inputHash = await sha256(pass);
+        if (inputHash === expectedHash) {
+          isCandidateAuthenticated = true;
+          loginOverlay.style.display = 'none';
+          return;
+        }
+      }
+
+      loginErrorMsg.textContent = 'Invalid credentials or access revoked.';
+      authPassword.value = '';
+      authPassword.focus();
+    });
+
+
+    const quizTitle = "Quiz Set 3";
+    const form = document.getElementById('assessment-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const statusMsg = document.getElementById('status-msg');
+
+    const questionsMeta = [
+  {
+    "id": "q1",
+    "category": "Linux Admin",
+    "title": "1. How do you extract/filter only the last column of text in Linux shell?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q2",
+    "category": "Linux Admin",
+    "title": "2. How do you resolve and extract the IP address from a URL or domain in Linux?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q3",
+    "category": "Linux Admin",
+    "title": "3. What is an inode in Linux and what happens when inodes run out while disk space is free?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q4",
+    "category": "Linux Admin",
+    "title": "4. What is LVM (Logical Volume Manager) in Linux?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q5",
+    "category": "Linux Admin",
+    "title": "5. If someone says a process running in a VM is slow, what is your initial triage sequence?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q6",
+    "category": "Linux Admin",
+    "title": "6. What is the key difference between Debian and Alpine Linux container base images?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q7",
+    "category": "Linux Admin",
+    "title": "7. What is a Zombie process (defunct) in Linux and how is it cleaned up?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q8",
+    "category": "Linux Admin",
+    "title": "8. What is the difference between a Soft Link (Symlink) and a Hard Link?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q9",
+    "category": "Linux Admin",
+    "title": "9. How do you remove all .tar files recursively from /home/ safely without argument crashes?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q10",
+    "category": "Linux Admin",
+    "title": "10. What do the special Bash variables $# and $? represent?",
+    "type": "mcq",
+    "desc": null
+  },
+  {
+    "id": "q11",
+    "category": "Bash Challenge",
+    "title": "11. Bash Challenge: Separate stdout and stderr into Variables",
+    "type": "text",
+    "desc": "How would you capture both stdout and stderr of a command into separate variables in a Bash script?"
+  },
+  {
+    "id": "q12",
+    "category": "Python Challenge",
+    "title": "12. Python Challenge: Reverse a Number",
+    "type": "text",
+    "desc": "Write a Python function to print/return an integer in reverse order."
+  },
+  {
+    "id": "q13",
+    "category": "CI/CD Challenge",
+    "title": "13. Jenkins Pipeline Challenge: Scripted vs Declarative & Passing Variables",
+    "type": "text",
+    "desc": "What is the difference between Jenkins scripted and declarative pipeline?\nCan you create an environment variable in one stage and pass it on to another stage in a declarative pipeline? Explain or provide snippet."
+  },
+  {
+    "id": "q14",
+    "category": "Kubernetes Challenge",
+    "title": "14. Kubernetes Challenge: Headless Service in Kubernetes",
+    "type": "text",
+    "desc": "What is a headless service in Kubernetes, how does DNS resolution work for it, and when should you use it?"
+  },
+  {
+    "id": "q15",
+    "category": "Terraform Challenge",
+    "title": "15. Terraform Challenge: Data Sources & terraform import",
+    "type": "text",
+    "desc": "What are data sources in Terraform?\nWhat is 'terraform import' and when do you use it?"
+  }
+];
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!firstName || !lastName || !email) {
+        statusMsg.style.color = 'var(--error)';
+        statusMsg.textContent = 'Please fill out all candidate fields.';
+        return;
+      }
+
+      const formData = new FormData(form);
+      const safeFirst = firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const safeLast = lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const filename = `${safeFirst}_${safeLast}_${quizTitle.replace(/\s+/g, '_')}.pdf`;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Generating PDF...';
+      statusMsg.style.color = 'var(--primary)';
+      statusMsg.textContent = 'Compiling answers into PDF...';
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+          orientation: 'portrait',
+          unit: 'pt',
+          format: 'a4'
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 40;
+        const contentWidth = pageWidth - (margin * 2);
+
+        let y = margin;
+
+        function checkPage(needed) {
+          if (y + needed > pageHeight - 50) {
+            doc.addPage();
+            y = margin;
+          }
+        }
+
+        // Header Banner
+        doc.setFillColor(15, 23, 42);
+        doc.rect(margin, y, contentWidth, 38, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.text(`DevOps Technical Assessment — ${quizTitle}`, margin + 14, y + 24);
+        y += 48;
+
+        // Candidate Info Card
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(203, 213, 225);
+        doc.roundedRect(margin, y, contentWidth, 68, 4, 4, 'FD');
+
+        doc.setFontSize(9.5);
+        doc.setTextColor(71, 85, 105);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Candidate Name:', margin + 14, y + 20);
+        doc.text('Email Address:', margin + 14, y + 38);
+        doc.text('Assessment Set:', margin + 14, y + 56);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(15, 23, 42);
+        doc.text(`${firstName} ${lastName}`, margin + 120, y + 20);
+        doc.text(email, margin + 120, y + 38);
+        doc.text(`${quizTitle} (Submitted: ${new Date().toLocaleString()})`, margin + 120, y + 56);
+        y += 82;
+
+        // Section Divider
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(2, 132, 199);
+        doc.text('Candidate Responses (10 MCQs + 5 Challenges)', margin, y);
+        doc.setDrawColor(2, 132, 199);
+        doc.setLineWidth(1);
+        doc.line(margin, y + 4, margin + contentWidth, y + 4);
+        y += 18;
+
+        questionsMeta.forEach((q) => {
+          const rawAnswer = formData.get(q.id) || 'No response provided';
+
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10);
+          const fullQuestionTitle = `[${q.category}] ${q.title}`;
+          const qLines = doc.splitTextToSize(fullQuestionTitle, contentWidth);
+          const qHeight = qLines.length * 13;
+
+          let descLines = [];
+          let descHeight = 0;
+          if (q.desc) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(8.5);
+            descLines = doc.splitTextToSize(q.desc, contentWidth - 16);
+            descHeight = (descLines.length * 11) + 6;
+          }
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9.5);
+          const answerPrefix = q.type === 'mcq' ? 'Selected Answer: ' : '';
+          const ansLines = doc.splitTextToSize(answerPrefix + rawAnswer, contentWidth - 24);
+          const ansHeight = (ansLines.length * 13) + 14;
+
+          checkPage(qHeight + descHeight + ansHeight + 18);
+
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(15, 23, 42);
+          doc.setFontSize(10);
+          doc.text(qLines, margin, y);
+          y += qHeight + 2;
+
+          if (q.desc) {
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8.5);
+            doc.text(descLines, margin + 8, y + 8);
+            y += descHeight;
+          }
+
+          if (q.type === 'mcq') {
+            doc.setFillColor(240, 249, 255);
+            doc.setDrawColor(186, 230, 253);
+            doc.roundedRect(margin, y, contentWidth, ansHeight, 3, 3, 'FD');
+            doc.setFillColor(2, 132, 199);
+            doc.rect(margin, y, 3.5, ansHeight, 'F');
+
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(3, 105, 161);
+            doc.setFontSize(9.5);
+            doc.text(ansLines, margin + 12, y + 13);
+          } else {
+            doc.setFillColor(241, 245, 249);
+            doc.setDrawColor(226, 232, 240);
+            doc.roundedRect(margin, y, contentWidth, ansHeight, 3, 3, 'FD');
+            doc.setFillColor(2, 132, 199);
+            doc.rect(margin, y, 3.5, ansHeight, 'F');
+
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(9.5);
+            doc.text(ansLines, margin + 12, y + 13);
+          }
+
+          y += ansHeight + 14;
+        });
+
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          doc.setPage(i);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184);
+          doc.text(`Candidate: ${firstName} ${lastName} (${email}) — ${quizTitle}`, margin, pageHeight - 20);
+          doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 20, { align: 'right' });
+        }
+
+        doc.save(filename);
+        statusMsg.style.color = 'var(--success)';
+        statusMsg.textContent = `Downloaded: ${filename}`;
+      } catch (err) {
+        console.error('PDF error:', err);
+        statusMsg.style.color = 'var(--error)';
+        statusMsg.textContent = 'Error creating PDF: ' + err.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit & Download PDF';
+      }
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
