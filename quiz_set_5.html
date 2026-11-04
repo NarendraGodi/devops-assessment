@@ -73,6 +73,27 @@
       text-transform: uppercase;
     }
 
+    .btn-home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #0369a1;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      transition: all 0.2s;
+    }
+
+    .btn-home-link:hover {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+
     p.subtitle {
       color: var(--text-muted);
       font-size: 0.95rem;
@@ -144,16 +165,6 @@
       box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
     }
 
-    select.quiz-picker {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-      color: #0f172a;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 12px 14px;
-      cursor: pointer;
-    }
-
     .question-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -200,6 +211,7 @@
     .tag-cicd { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
     .tag-k8s { background: #cffafe; color: #0e7490; border: 1px solid #a5f3fc; }
     .tag-tf { background: #fae8ff; color: #a21caf; border: 1px solid #f5d0fe; }
+    .tag-gcp { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
 
     .q-desc {
       font-size: 0.86rem;
@@ -216,7 +228,6 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    /* MCQ Options Styling */
     .mcq-options-container {
       display: flex;
       flex-direction: column;
@@ -257,7 +268,6 @@
       color: #0369a1;
     }
 
-    /* Highlighted Answer Box & Line Header for Code/Text Challenges */
     .answer-box-wrap {
       margin-top: 14px;
     }
@@ -351,14 +361,14 @@
       min-height: 24px;
     }
 
-    /* Modal Login Gate */
-    #login-modal-overlay {
+    /* Modal Styling */
+    #login-modal-overlay, #rules-modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(15, 23, 42, 0.78);
+      background: rgba(15, 23, 42, 0.82);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       z-index: 999999;
@@ -368,19 +378,23 @@
       padding: 16px;
     }
 
-    .login-card {
-      width: 100%;
-      max-width: 440px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 32px 28px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+    #rules-modal-overlay {
+      z-index: 999998;
     }
 
-    .login-header {
+    .login-card, .rules-card {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 32px 28px;
+      box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.25);
+    }
+
+    .login-header, .rules-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     .login-badge {
@@ -394,87 +408,6 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 8px;
-    }
-
-    .login-header h2 {
-      font-size: 1.45rem;
-      color: #0f172a;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .login-header p {
-      color: #64748b;
-      font-size: 0.88rem;
-    }
-
-    .btn-login {
-      width: 100%;
-      background: #0284c7;
-      color: #ffffff;
-      border: none;
-      padding: 13px;
-      font-size: 0.98rem;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 14px;
-      transition: background 0.2s;
-    }
-
-    .btn-login:hover {
-      background: #0369a1;
-    }
-
-    #login-error-msg {
-      color: #dc2626;
-      font-size: 0.85rem;
-      font-weight: 600;
-      min-height: 20px;
-      margin-top: 6px;
-      text-align: center;
-    }
-
-    .login-notice {
-      margin-top: 20px;
-      padding-top: 14px;
-      border-top: 1px dashed #e2e8f0;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #64748b;
-    }
-
-    .login-notice span {
-      font-weight: 700;
-      color: #d97706;
-    }
-
-  
-    /* Rules Modal Styling */
-    #rules-modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(15, 23, 42, 0.82);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 999998;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .rules-card {
-      width: 100%;
-      max-width: 520px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 32px 28px;
-      box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.25);
     }
 
     .rules-badge {
@@ -491,17 +424,81 @@
       margin-bottom: 8px;
     }
 
-    .rules-card h2 {
+    .login-header h2, .rules-card h2 {
       font-size: 1.45rem;
       color: #0f172a;
       font-weight: 800;
       margin-bottom: 6px;
     }
 
-    .rules-sub {
+    .login-header p, .rules-sub {
       color: #64748b;
-      font-size: 0.9rem;
-      margin-bottom: 18px;
+      font-size: 0.88rem;
+    }
+
+    .btn-login, .btn-agree {
+      width: 100%;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background 0.2s, opacity 0.2s;
+    }
+
+    .btn-login:hover, .btn-agree:hover:not(:disabled) {
+      background: #0369a1;
+    }
+
+    .btn-agree:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    #login-error-msg {
+      color: #dc2626;
+      font-size: 0.85rem;
+      font-weight: 600;
+      min-height: 20px;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    .login-notice {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed #e2e8f0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .login-notice span {
+      font-weight: 700;
+      color: #d97706;
+    }
+
+    .btn-return-home {
+      display: block;
+      text-align: center;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-top: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: color 0.2s, background-color 0.2s;
+    }
+
+    .btn-return-home:hover {
+      color: #0284c7;
+      background-color: #f1f5f9;
+      text-decoration: none;
     }
 
     .rules-list {
@@ -512,7 +509,7 @@
       border: 1px solid #e2e8f0;
       border-radius: 10px;
       padding: 16px;
-      margin-bottom: 20px;
+      margin: 18px 0;
     }
 
     .rule-item {
@@ -560,28 +557,6 @@
       cursor: pointer;
     }
 
-    .btn-agree {
-      width: 100%;
-      background: #0284c7;
-      color: #ffffff;
-      border: none;
-      padding: 14px;
-      font-size: 1rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s, opacity 0.2s;
-    }
-
-    .btn-agree:hover:not(:disabled) {
-      background: #0369a1;
-    }
-
-    .btn-agree:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
     .rules-credit {
       text-align: center;
       margin-top: 18px;
@@ -593,7 +568,6 @@
       color: #0369a1;
     }
 
-    /* Footer styling with creator credit */
     .page-footer {
       text-align: center;
       margin-top: 50px;
@@ -614,53 +588,10 @@
       border: 1px solid #bae6fd;
       font-size: 0.82rem;
     }
-
-  
-    .btn-return-home {
-      display: block;
-      text-align: center;
-      color: #64748b;
-      text-decoration: none;
-      font-size: 0.86rem;
-      font-weight: 600;
-      margin-top: 12px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      transition: color 0.2s, background-color 0.2s;
-    }
-
-    .btn-return-home:hover {
-      color: #0284c7;
-      background-color: #f1f5f9;
-      text-decoration: none;
-    }
-
-    .btn-home-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #0369a1;
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 6px;
-      background: #e0f2fe;
-      border: 1px solid #bae6fd;
-      transition: all 0.2s;
-    }
-
-    .btn-home-link:hover {
-      background: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
-    }
-
-  </style>
+</style>
 </head>
 <body>
 
-  
   <!-- Rules & Instructions Modal -->
   <div id="rules-modal-overlay" style="display: none;">
     <div class="rules-card">
@@ -680,8 +611,8 @@
         <div class="rule-item">
           <span class="rule-icon">&#10004;</span>
           <div>
-            <strong>All Questions Are Mandatory</strong>
-            <p>You cannot submit or generate your result PDF until all 15 questions (10 MCQs + 5 technical challenges) are answered.</p>
+            <strong>All 16 Questions Are Mandatory</strong>
+            <p>You cannot submit or generate your result PDF until all questions (10 Linux MCQs + 6 technical challenges) are answered.</p>
           </div>
         </div>
 
@@ -689,7 +620,7 @@
           <span class="rule-icon">&#128196;</span>
           <div>
             <strong>Automated PDF Report Download</strong>
-            <p>Upon clicking submit, your assessment report will automatically download as <code>firstname_lastname_Quiz_X.pdf</code> with all your responses recorded.</p>
+            <p>Upon clicking submit, your assessment report will automatically download as <code>firstname_lastname_Quiz Set 5.pdf</code> with all responses recorded.</p>
           </div>
         </div>
 
@@ -741,9 +672,9 @@
       <div class="login-notice">
         <span>&#9888; Note:</span> Refreshing the page automatically logs out this session.
       </div>
+      <a href="index.html" class="btn-return-home">&larr; Return to Quiz Selection</a>
     </div>
   </div>
-
 
   <div class="container">
     <header>
@@ -754,7 +685,7 @@
         </div>
         <span class="badge">Quiz Set 5</span>
       </div>
-      <p class="subtitle">Enter candidate info and answer all 15 technical questions below (10 MCQs + 5 Challenges). Submitting automatically downloads <code>firstname_lastname_Quiz_Set_5.pdf</code>.</p>
+      <p class="subtitle">Enter candidate info and answer all 16 technical questions below (10 Linux MCQs + 6 Challenges). Submitting automatically downloads <code>firstname_lastname_Quiz Set 5.pdf</code>.</p>
     </header>
 
     <form id="assessment-form">
@@ -780,7 +711,7 @@
 
       <div class="section-title">
         <span>2. Technical Assessment Questions</span>
-        <span class="section-subtitle">10 Linux Admin (MCQ) + 5 Challenges</span>
+        <span class="section-subtitle">10 Linux Admin (MCQs) + 6 Challenges</span>
       </div>
 
       <div id="questions-container">
@@ -847,58 +778,28 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">3. What are the Four Golden Signals of monitoring according to Google SRE?</span>
+          <span class="q-text">3. In Git, what is the exact difference between git pull, git fetch, and git rebase?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q3" value="Latency, Traffic, Errors, Saturation" required>
-            <span>Latency, Traffic, Errors, Saturation</span>
-          </label>
-
-          <label class="mcq-option-label">
-            <input type="radio" name="q3" value="CPU, Memory, Disk, Network" required>
-            <span>CPU, Memory, Disk, Network</span>
-          </label>
-
-          <label class="mcq-option-label">
-            <input type="radio" name="q3" value="Deployment, Rollback, Testing, Monitoring" required>
-            <span>Deployment, Rollback, Testing, Monitoring</span>
-          </label>
-
-          <label class="mcq-option-label">
-            <input type="radio" name="q3" value="Ping, Traceroute, DNS, SSL" required>
-            <span>Ping, Traceroute, DNS, SSL</span>
-          </label>
-        </div>
-      </div>
-    
-
-      <div class="question-card">
-        <div class="q-header">
-          <span class="q-text">4. What is the difference between git pull, git fetch, and git rebase?</span>
-          <span class="q-tag tag-linux">Linux Admin</span>
-        </div>
-        <div class="mcq-options-container">
-          
-          <label class="mcq-option-label">
-            <input type="radio" name="q4" value="git fetch downloads commits without modifying work branch; git pull = fetch + merge; git rebase reapplies commits onto new base" required>
+            <input type="radio" name="q3" value="git fetch downloads commits without modifying work branch; git pull = fetch + merge; git rebase reapplies commits onto new base" required>
             <span>git fetch downloads commits without modifying work branch; git pull = fetch + merge; git rebase reapplies commits onto new base</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q4" value="git fetch deletes remote branches; git pull clones repos" required>
+            <input type="radio" name="q3" value="git fetch deletes remote branches; git pull clones repos" required>
             <span>git fetch deletes remote branches; git pull clones repos</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q4" value="git pull does not update local code; git fetch does" required>
+            <input type="radio" name="q3" value="git pull does not update local code; git fetch does" required>
             <span>git pull does not update local code; git fetch does</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q4" value="git rebase is identical to git clone" required>
+            <input type="radio" name="q3" value="git rebase is identical to git clone" required>
             <span>git rebase is identical to git clone</span>
           </label>
         </div>
@@ -907,28 +808,28 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">5. What does git stash and git stash apply do?</span>
+          <span class="q-text">4. What does git stash and git stash apply do?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q5" value="git stash saves uncommitted work to stash stack; git stash apply restores those changes without dropping them from stack" required>
+            <input type="radio" name="q4" value="git stash saves uncommitted work to stash stack; git stash apply restores those changes without dropping them from stack" required>
             <span>git stash saves uncommitted work to stash stack; git stash apply restores those changes without dropping them from stack</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q5" value="git stash commits code permanently to main" required>
+            <input type="radio" name="q4" value="git stash commits code permanently to main" required>
             <span>git stash commits code permanently to main</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q5" value="git stash deletes uncommitted files forever" required>
+            <input type="radio" name="q4" value="git stash deletes uncommitted files forever" required>
             <span>git stash deletes uncommitted files forever</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q5" value="git stash pushes code to remote GitHub" required>
+            <input type="radio" name="q4" value="git stash pushes code to remote GitHub" required>
             <span>git stash pushes code to remote GitHub</span>
           </label>
         </div>
@@ -937,28 +838,28 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">6. How do you resolve Git merge conflicts from the command line?</span>
+          <span class="q-text">5. How do you resolve Git merge conflicts from the command line?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q6" value="Inspect conflict markers (&lt;&lt;&lt;&lt;&lt;&lt;&lt;, =======, &gt;&gt;&gt;&gt;&gt;&gt;&gt;), edit to resolved state, run git add, then git commit" required>
+            <input type="radio" name="q5" value="Inspect conflict markers (&lt;&lt;&lt;&lt;&lt;&lt;&lt;, =======, &gt;&gt;&gt;&gt;&gt;&gt;&gt;), edit to resolved state, run git add, then git commit" required>
             <span>Inspect conflict markers (&lt;&lt;&lt;&lt;&lt;&lt;&lt;, =======, &gt;&gt;&gt;&gt;&gt;&gt;&gt;), edit to resolved state, run git add, then git commit</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q6" value="Delete the .git directory" required>
+            <input type="radio" name="q5" value="Delete the .git directory" required>
             <span>Delete the .git directory</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q6" value="Run git push --force immediately" required>
+            <input type="radio" name="q5" value="Run git push --force immediately" required>
             <span>Run git push --force immediately</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q6" value="Run git clean -fd to delete all files" required>
+            <input type="radio" name="q5" value="Run git clean -fd to delete all files" required>
             <span>Run git clean -fd to delete all files</span>
           </label>
         </div>
@@ -967,28 +868,28 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">7. What is the difference between COPY and ADD in a Dockerfile?</span>
+          <span class="q-text">6. What is the difference between COPY and ADD in a Dockerfile?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q7" value="COPY copies local files; ADD also auto-extracts local tarballs and supports remote URL sources" required>
+            <input type="radio" name="q6" value="COPY copies local files; ADD also auto-extracts local tarballs and supports remote URL sources" required>
             <span>COPY copies local files; ADD also auto-extracts local tarballs and supports remote URL sources</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q7" value="ADD only copies folders; COPY only copies single text files" required>
+            <input type="radio" name="q6" value="ADD only copies folders; COPY only copies single text files" required>
             <span>ADD only copies folders; COPY only copies single text files</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q7" value="COPY is deprecated; only ADD should be used" required>
+            <input type="radio" name="q6" value="COPY is deprecated; only ADD should be used" required>
             <span>COPY is deprecated; only ADD should be used</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q7" value="ADD runs at container boot; COPY runs at build time" required>
+            <input type="radio" name="q6" value="ADD runs at container boot; COPY runs at build time" required>
             <span>ADD runs at container boot; COPY runs at build time</span>
           </label>
         </div>
@@ -997,28 +898,28 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">8. What is the difference between ENTRYPOINT and CMD in Docker?</span>
+          <span class="q-text">7. What is the difference between ENTRYPOINT and CMD in Docker?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q8" value="ENTRYPOINT defines default binary/executable; CMD provides default arguments easily overridden at `docker run`" required>
+            <input type="radio" name="q7" value="ENTRYPOINT defines default binary/executable; CMD provides default arguments easily overridden at `docker run`" required>
             <span>ENTRYPOINT defines default binary/executable; CMD provides default arguments easily overridden at `docker run`</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q8" value="CMD defines executable and cannot be overridden; ENTRYPOINT is optional" required>
+            <input type="radio" name="q7" value="CMD defines executable and cannot be overridden; ENTRYPOINT is optional" required>
             <span>CMD defines executable and cannot be overridden; ENTRYPOINT is optional</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q8" value="Both are 100% identical in Docker syntax" required>
+            <input type="radio" name="q7" value="Both are 100% identical in Docker syntax" required>
             <span>Both are 100% identical in Docker syntax</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q8" value="CMD runs with root privileges; ENTRYPOINT runs as nobody" required>
+            <input type="radio" name="q7" value="CMD runs with root privileges; ENTRYPOINT runs as nobody" required>
             <span>CMD runs with root privileges; ENTRYPOINT runs as nobody</span>
           </label>
         </div>
@@ -1027,28 +928,28 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">9. What is the default port of Nginx and how do you change it?</span>
+          <span class="q-text">8. What is the default port of Nginx and how do you change it?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q9" value="Port 80; change `listen 80;` directive in /etc/nginx/nginx.conf or default site config" required>
+            <input type="radio" name="q8" value="Port 80; change `listen 80;` directive in /etc/nginx/nginx.conf or default site config" required>
             <span>Port 80; change `listen 80;` directive in /etc/nginx/nginx.conf or default site config</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q9" value="Port 443; change in /etc/hosts" required>
+            <input type="radio" name="q8" value="Port 443; change in /etc/hosts" required>
             <span>Port 443; change in /etc/hosts</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q9" value="Port 8080; change in /etc/resolv.conf" required>
+            <input type="radio" name="q8" value="Port 8080; change in /etc/resolv.conf" required>
             <span>Port 8080; change in /etc/resolv.conf</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q9" value="Port 22; change in /etc/ssh/sshd_config" required>
+            <input type="radio" name="q8" value="Port 22; change in /etc/ssh/sshd_config" required>
             <span>Port 22; change in /etc/ssh/sshd_config</span>
           </label>
         </div>
@@ -1057,29 +958,59 @@
 
       <div class="question-card">
         <div class="q-header">
-          <span class="q-text">10. What is pom.xml and what is CAB in Release Management?</span>
+          <span class="q-text">9. What is pom.xml and what is CAB in Release Management?</span>
           <span class="q-tag tag-linux">Linux Admin</span>
         </div>
         <div class="mcq-options-container">
           
           <label class="mcq-option-label">
-            <input type="radio" name="q10" value="pom.xml = Project Object Model managing Maven dependencies; CAB = Change Advisory Board evaluating release risk" required>
+            <input type="radio" name="q9" value="pom.xml = Project Object Model managing Maven dependencies; CAB = Change Advisory Board evaluating release risk" required>
             <span>pom.xml = Project Object Model managing Maven dependencies; CAB = Change Advisory Board evaluating release risk</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q10" value="pom.xml = Python Object Module; CAB = Container Architecture Builder" required>
+            <input type="radio" name="q9" value="pom.xml = Python Object Module; CAB = Container Architecture Builder" required>
             <span>pom.xml = Python Object Module; CAB = Container Architecture Builder</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q10" value="pom.xml = Process Output Map; CAB = Cloud Application Backup" required>
+            <input type="radio" name="q9" value="pom.xml = Process Output Map; CAB = Cloud Application Backup" required>
             <span>pom.xml = Process Output Map; CAB = Cloud Application Backup</span>
           </label>
 
           <label class="mcq-option-label">
-            <input type="radio" name="q10" value="pom.xml = Pipeline Orchestration Model; CAB = Continuous Automated Build" required>
+            <input type="radio" name="q9" value="pom.xml = Pipeline Orchestration Model; CAB = Continuous Automated Build" required>
             <span>pom.xml = Pipeline Orchestration Model; CAB = Continuous Automated Build</span>
+          </label>
+        </div>
+      </div>
+    
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">10. In Linux, how do you inspect swap partition allocation and swappiness?</span>
+          <span class="q-tag tag-linux">Linux Admin</span>
+        </div>
+        <div class="mcq-options-container">
+          
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="swapon --show or cat /proc/swaps, and cat /proc/sys/vm/swappiness" required>
+            <span>swapon --show or cat /proc/swaps, and cat /proc/sys/vm/swappiness</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="netstat -rn" required>
+            <span>netstat -rn</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="lsblk -f swap only" required>
+            <span>lsblk -f swap only</span>
+          </label>
+
+          <label class="mcq-option-label">
+            <input type="radio" name="q10" value="iptables -L" required>
+            <span>iptables -L</span>
           </label>
         </div>
       </div>
@@ -1165,21 +1096,35 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
         </div>
       </div>
     
+
+      <div class="question-card">
+        <div class="q-header">
+          <span class="q-text">16. GCP Challenge: Cloud Storage Architecture (GCS vs PD vs Filestore)</span>
+          <span class="q-tag tag-gcp">GCP Challenge</span>
+        </div>
+        <div class="q-desc">Compare the 3 primary storage offerings in Google Cloud: Cloud Storage (GCS object storage), Persistent Disks (Zonal block storage), and Cloud Filestore (managed NFS). When would you choose Filestore over Persistent Disks in multi-writer container workloads?</div>
+        <div class="answer-box-wrap">
+          <div class="answer-header-line">
+            <span class="answer-tag">Answer</span>
+            <span class="answer-line"></span>
+          </div>
+          <textarea name="q16" class="answer-textarea " required></textarea>
+        </div>
+      </div>
+    
       </div>
 
       <button type="submit" class="btn-submit" id="submit-btn">Submit & Download PDF</button>
       <div id="status-msg"></div>
     </form>
-  
+
     <footer class="page-footer">
-      <div>DevOps Technical Assessment Platform &bull; All 15 Questions Mandatory</div>
+      <div>DevOps Technical Assessment Platform &bull; All 16 Questions Mandatory</div>
       <div class="creator-credit">Designed by Narendra Godi</div>
     </footer>
   </div>
 
   <script>
-
-    // In-Memory Authentication Logic (Auto-Logout on Refresh)
     // In-Memory Authentication Logic (Auto-Logout on Refresh)
     let isCandidateAuthenticated = false;
 
@@ -1207,7 +1152,6 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
         if (inputHash === expectedHash) {
           isCandidateAuthenticated = true;
           loginOverlay.style.display = 'none';
-          // Open Rules Agreement Modal
           const rulesOverlay = document.getElementById('rules-modal-overlay');
           if (rulesOverlay) {
             rulesOverlay.style.display = 'flex';
@@ -1220,7 +1164,6 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
       authPassword.value = '';
       authPassword.focus();
     });
-
 
     const quizTitle = "Quiz Set 5";
     const form = document.getElementById('assessment-form');
@@ -1245,56 +1188,56 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
   {
     "id": "q3",
     "category": "Linux Admin",
-    "title": "3. What are the Four Golden Signals of monitoring according to Google SRE?",
+    "title": "3. In Git, what is the exact difference between git pull, git fetch, and git rebase?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q4",
     "category": "Linux Admin",
-    "title": "4. What is the difference between git pull, git fetch, and git rebase?",
+    "title": "4. What does git stash and git stash apply do?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q5",
     "category": "Linux Admin",
-    "title": "5. What does git stash and git stash apply do?",
+    "title": "5. How do you resolve Git merge conflicts from the command line?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q6",
     "category": "Linux Admin",
-    "title": "6. How do you resolve Git merge conflicts from the command line?",
+    "title": "6. What is the difference between COPY and ADD in a Dockerfile?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q7",
     "category": "Linux Admin",
-    "title": "7. What is the difference between COPY and ADD in a Dockerfile?",
+    "title": "7. What is the difference between ENTRYPOINT and CMD in Docker?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q8",
     "category": "Linux Admin",
-    "title": "8. What is the difference between ENTRYPOINT and CMD in Docker?",
+    "title": "8. What is the default port of Nginx and how do you change it?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q9",
     "category": "Linux Admin",
-    "title": "9. What is the default port of Nginx and how do you change it?",
+    "title": "9. What is pom.xml and what is CAB in Release Management?",
     "type": "mcq",
     "desc": null
   },
   {
     "id": "q10",
     "category": "Linux Admin",
-    "title": "10. What is pom.xml and what is CAB in Release Management?",
+    "title": "10. In Linux, how do you inspect swap partition allocation and swappiness?",
     "type": "mcq",
     "desc": null
   },
@@ -1332,6 +1275,13 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
     "title": "15. Terraform Challenge: count vs for_each",
     "type": "text",
     "desc": "What is the difference between count and for_each in Terraform? When should you use which?"
+  },
+  {
+    "id": "q16",
+    "category": "GCP Challenge",
+    "title": "16. GCP Challenge: Cloud Storage Architecture (GCS vs PD vs Filestore)",
+    "type": "text",
+    "desc": "Compare the 3 primary storage offerings in Google Cloud: Cloud Storage (GCS object storage), Persistent Disks (Zonal block storage), and Cloud Filestore (managed NFS). When would you choose Filestore over Persistent Disks in multi-writer container workloads?"
   }
 ];
 
@@ -1412,7 +1362,7 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
         doc.setTextColor(2, 132, 199);
-        doc.text('Candidate Responses (10 MCQs + 5 Challenges)', margin, y);
+        doc.text('Candidate Responses (10 Linux MCQs + 6 Challenges)', margin, y);
         doc.setDrawColor(2, 132, 199);
         doc.setLineWidth(1);
         doc.line(margin, y + 4, margin + contentWidth, y + 4);
@@ -1507,31 +1457,6 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
         submitBtn.textContent = 'Submit & Download PDF';
       }
     });
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-  </script>
-  <script>
-    // Bottom rules listener
-    const agreeCb = document.getElementById('agree-checkbox');
-    const agreeBtn = document.getElementById('btn-agree-start');
-    const rulesBox = document.getElementById('rules-modal-overlay');
-
-    if (agreeCb && agreeBtn) {
-      agreeCb.addEventListener('change', function() {
-        agreeBtn.disabled = !this.checked;
-      });
-      agreeBtn.addEventListener('click', function() {
-        if (rulesBox) rulesBox.style.display = 'none';
-      });
-    }
   </script>
 </body>
 </html>
