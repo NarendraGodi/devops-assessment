@@ -1175,7 +1175,7 @@ Example line: &#039;192.168.1.1 - - [04/Nov/2026] &quot;GET /api/v1/health HTTP/
       // Check if candidate is attempting to use credentials from another quiz
       let otherQuiz = null;
       if (window.QUIZ_CREDENTIALS) {
-        for (let checkQ = 1; checkQ <= 6; checkQ++) {
+        for (let checkQ = 1; checkQ <= 10; checkQ++) {
           if (checkQ !== currentQuizNum && window.QUIZ_CREDENTIALS[checkQ] && window.QUIZ_CREDENTIALS[checkQ][user]) {
             otherQuiz = checkQ;
             break;

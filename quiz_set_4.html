@@ -1178,7 +1178,7 @@ What is state locking and how does it prevent conflicts?</div>
       // Check if candidate is attempting to use credentials from another quiz
       let otherQuiz = null;
       if (window.QUIZ_CREDENTIALS) {
-        for (let checkQ = 1; checkQ <= 6; checkQ++) {
+        for (let checkQ = 1; checkQ <= 10; checkQ++) {
           if (checkQ !== currentQuizNum && window.QUIZ_CREDENTIALS[checkQ] && window.QUIZ_CREDENTIALS[checkQ][user]) {
             otherQuiz = checkQ;
             break;

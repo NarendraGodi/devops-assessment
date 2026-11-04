@@ -1175,7 +1175,7 @@ Example input: [&#039;10.0.0.1&#039;, &#039;192.168.1.1&#039;, &#039;10.0.0.1&#0
       // Check if candidate is attempting to use credentials from another quiz
       let otherQuiz = null;
       if (window.QUIZ_CREDENTIALS) {
-        for (let checkQ = 1; checkQ <= 6; checkQ++) {
+        for (let checkQ = 1; checkQ <= 10; checkQ++) {
           if (checkQ !== currentQuizNum && window.QUIZ_CREDENTIALS[checkQ] && window.QUIZ_CREDENTIALS[checkQ][user]) {
             otherQuiz = checkQ;
             break;
