@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevOps Technical Assessment Platform</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Active Candidate Credentials -->
-  <script src="users.js"></script>
+  <title>DevOps Technical Assessment Portal</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -16,8 +13,7 @@
       --text-muted: #64748b;
       --primary: #0284c7;
       --primary-hover: #0369a1;
-      --error: #dc2626;
-      --success: #16a34a;
+      --accent: #0ea5e9;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,1871 +23,330 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      padding: 32px 16px 60px;
+      padding: 40px 20px 80px;
     }
 
     .container {
-      max-width: 880px;
+      max-width: 1040px;
       margin: 0 auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 36px 32px;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
     }
 
     header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 22px;
-      margin-bottom: 26px;
+      text-align: center;
+      margin-bottom: 40px;
     }
 
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    h1 {
-      font-size: 1.85rem;
-      color: #0369a1;
-      font-weight: 700;
-    }
-
-    .badge {
+    .portal-badge {
+      display: inline-block;
       background: #e0f2fe;
       color: #0369a1;
       border: 1px solid #bae6fd;
       font-size: 0.8rem;
-      padding: 5px 12px;
+      padding: 5px 14px;
       border-radius: 9999px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #0f172a;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
     }
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 0.95rem;
+      font-size: 1.05rem;
+      max-width: 620px;
+      margin: 0 auto;
     }
 
-    .section-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin: 28px 0 16px;
-      border-left: 4px solid var(--primary);
-      padding-left: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .section-subtitle {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      font-weight: normal;
-    }
-
-    .grid-row {
+    .quiz-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 24px;
     }
 
-    @media (max-width: 640px) {
-      .grid-row { grid-template-columns: 1fr; }
-      .container { padding: 20px 16px; }
+    .quiz-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 26px;
+      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
 
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 6px;
-    }
-
-    label .req {
-      color: var(--error);
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    select {
-      width: 100%;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 10px 14px;
-      color: #0f172a;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
-    }
-
-    select.quiz-picker {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-      color: #0f172a;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 12px 14px;
-      cursor: pointer;
-    }
-
-    .question-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 22px 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      transition: border-color 0.2s;
-    }
-
-    .question-card:hover {
+    .quiz-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.12);
       border-color: #94a3b8;
     }
 
-    .q-header {
+    .card-top {
+      margin-bottom: 20px;
+    }
+
+    .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       margin-bottom: 12px;
-      gap: 12px;
     }
 
-    .q-text {
-      font-weight: 600;
-      color: #0f172a;
-      font-size: 0.98rem;
-      line-height: 1.45;
-    }
-
-    .q-tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: 600;
-      white-space: nowrap;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .tag-linux { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-    .tag-bash { background: #fef9c3; color: #a16207; border: 1px solid #fef08a; }
-    .tag-python { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .tag-cicd { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
-    .tag-k8s { background: #cffafe; color: #0e7490; border: 1px solid #a5f3fc; }
-    .tag-tf { background: #fae8ff; color: #a21caf; border: 1px solid #f5d0fe; }
-
-    .q-desc {
-      font-size: 0.86rem;
-      color: #334155;
-      margin-bottom: 14px;
-      white-space: pre-line;
-      background: #f8fafc;
-      padding: 12px 14px;
-      border-radius: 6px;
-      border-left: 3px solid #0284c7;
-      border-top: 1px solid #e2e8f0;
-      border-right: 1px solid #e2e8f0;
-      border-bottom: 1px solid #e2e8f0;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    /* MCQ Options Styling */
-    .mcq-options-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .mcq-option-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.94rem;
-      color: #1e293b;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .mcq-option-label:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-    }
-
-    .mcq-option-label input[type="radio"] {
-      width: 17px;
-      height: 17px;
-      accent-color: #0284c7;
-      cursor: pointer;
-    }
-
-    .mcq-option-label:has(input[type="radio"]:checked) {
-      background: #f0f9ff;
-      border-color: #0284c7;
-      font-weight: 500;
-      color: #0369a1;
-    }
-
-    /* Highlighted Answer Box & Line Header for Code/Text Challenges */
-    .answer-box-wrap {
-      margin-top: 14px;
-    }
-
-    .answer-header-line {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .answer-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #0369a1;
-      background: #e0f2fe;
-      border: 1px solid #bae6fd;
-      padding: 2px 10px;
-      border-radius: 4px;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-    }
-
-    .answer-line {
-      flex: 1;
-      height: 1px;
-      background: #e2e8f0;
-    }
-
-    textarea.answer-textarea {
-      width: 100%;
-      background: #fcfdfe;
-      border: 1.5px solid #94a3b8;
-      border-left: 4px solid #0284c7;
-      border-radius: 6px;
-      padding: 12px 14px;
-      color: #0f172a;
-      font-size: 0.95rem;
-      outline: none;
-      resize: vertical;
-      min-height: 100px;
-      font-family: inherit;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
-    }
-
-    textarea.answer-textarea:focus {
-      background: #ffffff;
-      border-color: #0284c7;
-      border-left: 4px solid #0369a1;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18), inset 0 1px 2px rgba(0, 0, 0, 0.02);
-    }
-
-    textarea.answer-textarea.code-font {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.88rem;
-      background: #f8fafc;
-    }
-
-    button.btn-submit {
-      width: 100%;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 16px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 28px;
-      transition: background 0.2s;
-    }
-
-    button.btn-submit:hover {
-      background: var(--primary-hover);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    #status-msg {
-      text-align: center;
-      margin-top: 16px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      min-height: 24px;
-    }
-
-    /* Modal Login Gate */
-    #login-modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(15, 23, 42, 0.78);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 440px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 32px 28px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
-    }
-
-    .login-header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .login-badge {
-      display: inline-block;
-      background: #e0f2fe;
-      color: #0369a1;
+    .set-tag {
       font-size: 0.75rem;
       font-weight: 700;
+      color: #0369a1;
+      background: #e0f2fe;
       padding: 3px 10px;
       border-radius: 9999px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    .q-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
       margin-bottom: 8px;
     }
 
-    .login-header h2 {
-      font-size: 1.45rem;
-      color: #0f172a;
-      font-weight: 700;
-      margin-bottom: 6px;
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
     }
 
-    .login-header p {
-      color: #64748b;
-      font-size: 0.88rem;
+    .topic-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 0.86rem;
+      color: #334155;
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
     }
 
-    .btn-login {
+    .topic-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topic-list li::before {
+      content: "•";
+      color: #0284c7;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .btn-start {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      background: #0284c7;
+      background: var(--primary);
       color: #ffffff;
-      border: none;
-      padding: 13px;
-      font-size: 0.98rem;
-      font-weight: 700;
+      text-decoration: none;
+      padding: 12px;
       border-radius: 6px;
-      cursor: pointer;
-      margin-top: 14px;
-      transition: background 0.2s;
-    }
-
-    .btn-login:hover {
-      background: #0369a1;
-    }
-
-    #login-error-msg {
-      color: #dc2626;
-      font-size: 0.85rem;
-      font-weight: 600;
-      min-height: 20px;
-      margin-top: 6px;
-      text-align: center;
-    }
-
-    .login-notice {
-      margin-top: 20px;
-      padding-top: 14px;
-      border-top: 1px dashed #e2e8f0;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #64748b;
-    }
-
-    .login-notice span {
       font-weight: 700;
-      color: #d97706;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+      margin-top: 20px;
     }
 
+    .btn-start:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-start span.arrow {
+      transition: transform 0.2s;
+    }
+
+    .btn-start:hover span.arrow {
+      transform: translateX(3px);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body>
 
-  <!-- In-Memory Authentication Gate (Auto-Logout on Page Refresh) -->
-  <div id="login-modal-overlay">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-badge">Candidate Verification</div>
-        <h2>DevOps Assessment Login</h2>
-        <p>Enter the interview credentials provided by your examiner to begin.</p>
-      </div>
-      <form id="login-form">
-        <div class="form-group">
-          <label for="auth-username">Candidate Username <span class="req">*</span></label>
-          <input type="text" id="auth-username" required autocomplete="off">
-        </div>
-        <div class="form-group">
-          <label for="auth-password">Session Password <span class="req">*</span></label>
-          <input type="password" id="auth-password" required autocomplete="off">
-        </div>
-        <div id="login-error-msg"></div>
-        <button type="submit" class="btn-login" id="btn-login-submit">Unlock Assessment</button>
-      </form>
-      <div class="login-notice">
-        <span>&#9888; Note:</span> Refreshing the page automatically logs out this session.
-      </div>
-    </div>
-  </div>
-
-
   <div class="container">
     <header>
-      <div class="header-top">
-        <h1>DevOps Technical Assessment</h1>
-        <span class="badge">15 Questions Blueprint</span>
-      </div>
-      <p class="subtitle">Complete candidate info, choose quiz set, and answer technical questions. Submitting downloads <code>firstname_lastname_QuizX.pdf</code>.</p>
+      <div class="portal-badge">DevOps Technical Assessment</div>
+      <h1>Candidate Assessment Portal</h1>
+      <p class="subtitle">Select your assigned assessment set to proceed. You will be prompted to enter your candidate verification credentials to unlock the questions.</p>
     </header>
 
-    <form id="assessment-form">
-      <div class="section-title">
-        <span>1. Candidate Details & Quiz Selection</span>
-      </div>
-
-      <div class="form-group">
-        <label for="quizSelector">Select Quiz Set <span class="req">*</span></label>
-        <select id="quizSelector" class="quiz-picker" required>
-          <option value="1">Quiz Set 1 — Core Linux (MCQ), S3 Terraform, Remote SSH Bash</option>
-          <option value="2">Quiz Set 2 — Storage/DNS (MCQ), K8s Ingress, Matrix Actions</option>
-          <option value="3">Quiz Set 3 — Triage & Inodes (MCQ), Headless K8s, Jenkins Scripted/Declarative</option>
-          <option value="4">Quiz Set 4 — Networking & DORA (MCQ), K8s Requests/Limits, Bash Pipefail</option>
-          <option value="5">Quiz Set 5 — Ansible/Git/Docker (MCQ), IP Frequency, EFK Logging</option>
-          <option value="6">Quiz Set 6 — GCP Cloud IAM (MCQ), K8s Architecture, Log Parse, Rolling Deploy</option>
-        </select>
-      </div>
-
-      <div class="grid-row">
-        <div class="form-group">
-          <label for="firstName">First Name <span class="req">*</span></label>
-          <input type="text" id="firstName" name="firstName" required>
+    <div class="quiz-grid">
+      <!-- Quiz Set 1 -->
+      <div class="quiz-card">
+        <div class="card-top">
+          <div class="card-header">
+            <span class="set-tag">Quiz Set 1</span>
+            <span class="q-count">15 Questions</span>
+          </div>
+          <h2 class="card-title">Core Linux & Automation</h2>
+          <p class="card-desc">Kernel, disk, memory diagnostics, S3 Terraform automation, and remote SSH error aggregation.</p>
+          <ul class="topic-list">
+            <li>10 Linux Admin MCQs</li>
+            <li>Bash: Remote Host Log Error Count</li>
+            <li>Python: Odd Number Filter & Square</li>
+            <li>CI/CD: GitHub Actions Branch Deploy</li>
+            <li>Kubernetes: ErrImagePull Triage</li>
+            <li>Terraform: Multi-Bucket S3 for_each</li>
+          </ul>
         </div>
-        <div class="form-group">
-          <label for="lastName">Last Name <span class="req">*</span></label>
-          <input type="text" id="lastName" name="lastName" required>
+        <a href="quiz_set_1.html" class="btn-start">
+          Start Quiz Set 1 <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Quiz Set 2 -->
+      <div class="quiz-card">
+        <div class="card-top">
+          <div class="card-header">
+            <span class="set-tag">Quiz Set 2</span>
+            <span class="q-count">15 Questions</span>
+          </div>
+          <h2 class="card-title">Storage, DNS & Ingress</h2>
+          <p class="card-desc">fstab mounts, file comparison, Cron scheduling, Docker container health, and Ingress routing.</p>
+          <ul class="topic-list">
+            <li>10 Linux Admin MCQs</li>
+            <li>Bash: Remote Docker Health Check</li>
+            <li>Python: Find Missing Number (1..N)</li>
+            <li>CI/CD: Actions Python Matrix & Docker Push</li>
+            <li>Kubernetes: Ingress vs Ingress Controller</li>
+            <li>Terraform: Resource Input Validation</li>
+          </ul>
         </div>
+        <a href="quiz_set_2.html" class="btn-start">
+          Start Quiz Set 2 <span class="arrow">&rarr;</span>
+        </a>
       </div>
 
-      <div class="form-group">
-        <label for="email">Email Address <span class="req">*</span></label>
-        <input type="email" id="email" name="email" required>
+      <!-- Quiz Set 3 -->
+      <div class="quiz-card">
+        <div class="card-top">
+          <div class="card-header">
+            <span class="set-tag">Quiz Set 3</span>
+            <span class="q-count">15 Questions</span>
+          </div>
+          <h2 class="card-title">Sysadmin Triage & Inodes</h2>
+          <p class="card-desc">Inodes, LVM storage, VM slow performance triage, Zombie processes, and Headless services.</p>
+          <ul class="topic-list">
+            <li>10 Linux Admin MCQs</li>
+            <li>Bash: Separate stdout & stderr Variables</li>
+            <li>Python: Reverse an Integer</li>
+            <li>CI/CD: Jenkins Scripted vs Declarative</li>
+            <li>Kubernetes: Headless Services & DNS</li>
+            <li>Terraform: Data Sources & State Import</li>
+          </ul>
+        </div>
+        <a href="quiz_set_3.html" class="btn-start">
+          Start Quiz Set 3 <span class="arrow">&rarr;</span>
+        </a>
       </div>
 
-      <div class="section-title">
-        <span id="quiz-section-heading">2. Questions (Quiz Set 1)</span>
-        <span class="section-subtitle">10 Linux Admin (MCQ) + 5 Challenges</span>
+      <!-- Quiz Set 4 -->
+      <div class="quiz-card">
+        <div class="card-top">
+          <div class="card-header">
+            <span class="set-tag">Quiz Set 4</span>
+            <span class="q-count">15 Questions</span>
+          </div>
+          <h2 class="card-title">Networking, DORA & K8s</h2>
+          <p class="card-desc">TCP/UDP, regex search, DORA metrics, swap space, pod requests vs limits, and bash pipefail.</p>
+          <ul class="topic-list">
+            <li>10 Linux Admin MCQs</li>
+            <li>Bash: set -e, set -u, set -o pipefail</li>
+            <li>Python: Binary Search on Sorted Array</li>
+            <li>CI/CD: Jenkins Multi-Node & Docker Agent</li>
+            <li>Kubernetes: Pod Requests, Limits, OOMKilled</li>
+            <li>Terraform: State Locking & Remote Backends</li>
+          </ul>
+        </div>
+        <a href="quiz_set_4.html" class="btn-start">
+          Start Quiz Set 4 <span class="arrow">&rarr;</span>
+        </a>
       </div>
 
-      <div id="questions-container"></div>
+      <!-- Quiz Set 5 -->
+      <div class="quiz-card">
+        <div class="card-top">
+          <div class="card-header">
+            <span class="set-tag">Quiz Set 5</span>
+            <span class="q-count">15 Questions</span>
+          </div>
+          <h2 class="card-title">Ansible, Docker & Logs</h2>
+          <p class="card-desc">PIPESTATUS, Ansible vars, Google SRE golden signals, Docker commands, and EFK log shipping.</p>
+          <ul class="topic-list">
+            <li>10 Linux Admin MCQs</li>
+            <li>Bash: Concurrency Lock Mechanism</li>
+            <li>Python: IP Address Frequency Counter</li>
+            <li>CI/CD: Automated Rollback on Health Failure</li>
+            <li>Kubernetes: Fluentd vs Fluent Bit & EFK</li>
+            <li>Terraform: count vs for_each Refactoring</li>
+          </ul>
+        </div>
+        <a href="quiz_set_5.html" class="btn-start">
+          Start Quiz Set 5 <span class="arrow">&rarr;</span>
+        </a>
+      </div>
 
-      <button type="submit" class="btn-submit" id="submit-btn">Submit & Download PDF</button>
-      <div id="status-msg"></div>
-    </form>
+      <!-- Quiz Set 6 -->
+      <div class="quiz-card">
+        <div class="card-top">
+          <div class="card-header">
+            <span class="set-tag">Quiz Set 6</span>
+            <span class="q-count">15 Questions</span>
+          </div>
+          <h2 class="card-title">Cloud IAM & Architecture</h2>
+          <p class="card-desc">GCP IAP SSH, bucket IAM permissions, control plane architecture, and rolling update playbooks.</p>
+          <ul class="topic-list">
+            <li>10 Linux Admin MCQs</li>
+            <li>Bash: Directory File Modification Monitor</li>
+            <li>Python: Access Log HTTP Status Code Parser</li>
+            <li>CI/CD: Ansible Zero-Downtime Rolling Update</li>
+            <li>Kubernetes: Control Plane Architecture</li>
+            <li>Terraform: Lifecycle create_before_destroy</li>
+          </ul>
+        </div>
+        <a href="quiz_set_6.html" class="btn-start">
+          Start Quiz Set 6 <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      DevOps Technical Assessment Platform &bull; Submissions generate downloadable candidate PDFs
+    </footer>
   </div>
 
-  <script>
-
-    // In-Memory Authentication Logic (Auto-Logout on Refresh)
-    // In-Memory Authentication Logic (Auto-Logout on Refresh)
-    let isCandidateAuthenticated = false;
-
-    const loginOverlay = document.getElementById('login-modal-overlay');
-    const loginForm = document.getElementById('login-form');
-    const authUsername = document.getElementById('auth-username');
-    const authPassword = document.getElementById('auth-password');
-    const loginErrorMsg = document.getElementById('login-error-msg');
-
-    async function sha256(str) {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const user = authUsername.value.trim();
-      const pass = authPassword.value.trim();
-
-      const userHashes = window.ACTIVE_USER_HASHES || {};
-      const expectedHash = userHashes[user];
-
-      if (expectedHash) {
-        const inputHash = await sha256(pass);
-        if (inputHash === expectedHash) {
-          isCandidateAuthenticated = true;
-          loginOverlay.style.display = 'none';
-          return;
-        }
-      }
-
-      loginErrorMsg.textContent = 'Invalid credentials or access revoked.';
-      authPassword.value = '';
-      authPassword.focus();
-    });
-
-
-    const quizSets = {
-  "1": {
-    "title": "Quiz Set 1",
-    "questions": [
-      {
-        "id": "q1",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "1. How do you check the current running kernel version in Linux?",
-        "options": [
-          "uname -r",
-          "cat /etc/hosts",
-          "ifconfig -a",
-          "sysctl --version"
-        ]
-      },
-      {
-        "id": "q2",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "2. How do you check disk usage in Linux for file systems and directories?",
-        "options": [
-          "df -h for file systems, and du -sh for directories",
-          "free -m for file systems, and top for directories",
-          "fdisk -l only",
-          "ls -l for file systems, and cd for directories"
-        ]
-      },
-      {
-        "id": "q3",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "3. How do you find out which processes are consuming the most CPU?",
-        "options": [
-          "top or ps aux --sort=-%cpu",
-          "netstat -tulpn",
-          "df -h",
-          "kill -9"
-        ]
-      },
-      {
-        "id": "q4",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "4. How do you check memory and swap usage in Linux?",
-        "options": [
-          "free -m or cat /proc/meminfo",
-          "ifconfig",
-          "uname -a",
-          "crontab -l"
-        ]
-      },
-      {
-        "id": "q5",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "5. How do you view the contents of a file in Linux?",
-        "options": [
-          "cat for small files, less/more for pagination, head/tail for start/end",
-          "chmod 755",
-          "touch",
-          "rm -rf"
-        ]
-      },
-      {
-        "id": "q6",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "6. How do you change file permissions in Linux?",
-        "options": [
-          "chmod (e.g. chmod 755 filename or chmod u+x)",
-          "chown",
-          "umask only",
-          "chroot"
-        ]
-      },
-      {
-        "id": "q7",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "7. How do you change the owner and group of a file or directory?",
-        "options": [
-          "chown user:group filename (with -R for recursive)",
-          "chmod 777 filename",
-          "usermod -aG",
-          "groupadd"
-        ]
-      },
-      {
-        "id": "q8",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "8. How do you restart a service in systemd-based Linux?",
-        "options": [
-          "systemctl restart <service_name>",
-          "service stop && service start",
-          "reboot -f",
-          "killall"
-        ]
-      },
-      {
-        "id": "q9",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "9. How do you check the status of a service?",
-        "options": [
-          "systemctl status <service_name>",
-          "ps -ef | grep status",
-          "ping localhost",
-          "journalctl --wipe"
-        ]
-      },
-      {
-        "id": "q10",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "10. How do you search for a specific text string across files recursively?",
-        "options": [
-          "grep -rn \"search_string\" /path/to/dir",
-          "find . -name \"search_string\"",
-          "locate -c",
-          "sed -i \"search_string\""
-        ]
-      },
-      {
-        "id": "q11",
-        "category": "Bash Challenge",
-        "tag": "tag-bash",
-        "type": "text",
-        "codeFont": true,
-        "title": "11. Bash Challenge: Remote Host Log Error Count",
-        "desc": "On Linux, from localhost using port 2222, check how many lines contain \"ERROR\" in /app/log/ directory on hosts remote_host1, remote_host2, ... remote_host20.\nPrivate key is ~/.ssh/remote_key\nRemote user is remote_user\nWrite a script or command to output the total count."
-      },
-      {
-        "id": "q12",
-        "category": "Python Challenge",
-        "tag": "tag-python",
-        "type": "text",
-        "codeFont": true,
-        "title": "12. Python Challenge: Odd Number Filter & Square",
-        "desc": "Given a list [12, 5, 7, 10, 8, 19], filter the odd numbers and return their square in a list."
-      },
-      {
-        "id": "q13",
-        "category": "CI/CD Challenge",
-        "tag": "tag-cicd",
-        "type": "text",
-        "codeFont": true,
-        "title": "13. GitHub Actions Challenge: Conditional Branch Deployment",
-        "desc": "Design a GitHub Actions workflow that triggers on push to 'main' and 'dev'.\nSteps: install dependencies, run tests, build application.\nDeploy to Dev if branch is dev.\nDeploy to Production only if branch is main AND tests pass."
-      },
-      {
-        "id": "q14",
-        "category": "Kubernetes Challenge",
-        "tag": "tag-k8s",
-        "type": "text",
-        "title": "14. Kubernetes Challenge: ErrImagePull & ImagePullBackOff Triage",
-        "desc": "A Kubernetes pod fails to start with ErrImagePull / ImagePullBackOff. Outline your systematic troubleshooting steps to diagnose and resolve this issue."
-      },
-      {
-        "id": "q15",
-        "category": "Terraform Challenge",
-        "tag": "tag-tf",
-        "type": "text",
-        "codeFont": true,
-        "title": "15. Terraform Challenge: Multi-Bucket Creation with for_each",
-        "desc": "Create multiple AWS S3 buckets using Terraform using a for_each loop.\nMap variable:\nvariable \"buckets\" {\n  default = {\n    bucket1 = { name = \"my-bucket-1\", environment = \"dev\" }\n    bucket2 = { name = \"my-bucket-2\", environment = \"staging\" }\n    bucket3 = { name = \"my-bucket-3\", environment = \"prod\" }\n  }\n}\nWrite the resource configuration block."
-      }
-    ]
-  },
-  "2": {
-    "title": "Quiz Set 2",
-    "questions": [
-      {
-        "id": "q1",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "1. What is the fundamental difference between yum/dnf and apt package managers?",
-        "options": [
-          "yum/dnf manages RPM packages on RedHat/CentOS; apt manages DEB packages on Debian/Ubuntu",
-          "yum is for Python only; apt is for C++ only",
-          "apt is deprecated across all distributions; yum is the modern standard",
-          "yum compiles everything from source; apt only downloads static binaries"
-        ]
-      },
-      {
-        "id": "q2",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "2. What is the importance and purpose of /etc/fstab?",
-        "options": [
-          "Defines disk partitions and filesystems to mount automatically at system boot",
-          "Stores static IP addresses and network interface routes",
-          "Stores user passwords and encrypted credentials",
-          "Contains iptables and firewalld rules"
-        ]
-      },
-      {
-        "id": "q3",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "3. What is the difference between mounting a disk manually and through fstab?",
-        "options": [
-          "Manual mount is temporary until reboot; fstab mounts persist across system reboots",
-          "Manual mount persists forever; fstab is temporary",
-          "fstab only mounts USB drives; manual mount is for hard disks",
-          "There is no difference in persistence or behavior"
-        ]
-      },
-      {
-        "id": "q4",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "4. How do you check differences between two files in Linux?",
-        "options": [
-          "diff -u file1 file2 or vimdiff file1 file2",
-          "cmp -l only",
-          "cat file1 file2",
-          "cp file1 file2"
-        ]
-      },
-      {
-        "id": "q5",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "5. How do you check memory and disk utilization of the root (/) folder?",
-        "options": [
-          "df -h / for disk space, and du -sh /* to identify largest directories",
-          "free -m /",
-          "top -root",
-          "fdisk /"
-        ]
-      },
-      {
-        "id": "q6",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "6. How do you schedule a Cron Job in Linux and what is the syntax?",
-        "options": [
-          "crontab -e with format: minute hour day_of_month month day_of_week command",
-          "crontab -w with format: second minute hour command",
-          "systemctl schedule",
-          "/etc/init.d/cron add"
-        ]
-      },
-      {
-        "id": "q7",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "7. What does nslookup do and how do you use it?",
-        "options": [
-          "Queries DNS name servers to resolve domain names to IP addresses (or reverse lookup)",
-          "Scans open TCP/UDP ports on a target server",
-          "Measures network round-trip latency via ICMP",
-          "Displays local kernel IP routing tables"
-        ]
-      },
-      {
-        "id": "q8",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "8. What is the difference between an absolute path and a relative path?",
-        "options": [
-          "Absolute starts from root / (e.g. /var/log); Relative starts from current directory (e.g. ./log)",
-          "Absolute is for files; Relative is for directories only",
-          "Absolute requires sudo permissions; Relative runs unprivileged",
-          "Absolute works only in Bash; Relative works across all shells"
-        ]
-      },
-      {
-        "id": "q9",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "9. How do you check which process and PID is listening on a specific port?",
-        "options": [
-          "ss -tulpn or netstat -tulpn or lsof -i :<port>",
-          "ping -p <port>",
-          "ifconfig <port>",
-          "traceroute <port>"
-        ]
-      },
-      {
-        "id": "q10",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "10. What is a reverse proxy and where is it used?",
-        "options": [
-          "Server in front of backends handling routing, SSL termination, caching, and load balancing",
-          "Client-side tool hiding browser IPs",
-          "Hardware firewall blocking incoming ICMP packets",
-          "DNS service mapping MAC addresses to IP addresses"
-        ]
-      },
-      {
-        "id": "q11",
-        "category": "Bash Challenge",
-        "tag": "tag-bash",
-        "type": "text",
-        "codeFont": true,
-        "title": "11. Bash Challenge: Remote Docker Container Health Check",
-        "desc": "On the servers host1..host10, check if a docker container named mydb is up and running or not.\nThe private key used is docker_rsa and user is docker.\nWrite a bash script to perform this check."
-      },
-      {
-        "id": "q12",
-        "category": "Python Challenge",
-        "tag": "tag-python",
-        "type": "text",
-        "codeFont": true,
-        "title": "12. Python Challenge: Find Missing Number",
-        "desc": "Out of a list of numbers from 1 to N with one number missing, write a Python function to find the missing number."
-      },
-      {
-        "id": "q13",
-        "category": "CI/CD Challenge",
-        "tag": "tag-cicd",
-        "type": "text",
-        "codeFont": true,
-        "title": "13. GitHub Actions Challenge: Matrix Build + Docker Image Push",
-        "desc": "Create a GitHub Actions workflow to run builds for multiple Python versions (3.8, 3.9, 3.10) using a matrix strategy.\nSteps: checkout code, setup Python, run tests.\nAfter success: build Docker image and push to Docker Hub."
-      },
-      {
-        "id": "q14",
-        "category": "Kubernetes Challenge",
-        "tag": "tag-k8s",
-        "type": "text",
-        "title": "14. Kubernetes Challenge: Ingress vs Ingress Controller & L4/L7 Routing",
-        "desc": "What is the difference between an ingress and an ingress controller in Kubernetes? Also explain the difference between a Layer 7 load balancer and a Layer 4 load balancer."
-      },
-      {
-        "id": "q15",
-        "category": "Terraform Challenge",
-        "tag": "tag-tf",
-        "type": "text",
-        "codeFont": true,
-        "title": "15. Terraform Challenge: Resource Input Validation",
-        "desc": "Given a local_file resource block, write a module or input variable validation that ensures the configuration does not accept the name \"Basic\"."
-      }
-    ]
-  },
-  "3": {
-    "title": "Quiz Set 3",
-    "questions": [
-      {
-        "id": "q1",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "1. How do you extract/filter only the last column of text in Linux shell?",
-        "options": [
-          "awk '{print $NF}' or rev | cut -d' ' -f1 | rev",
-          "cut -d' ' -f1",
-          "sed -n '$p'",
-          "grep -o '$'"
-        ]
-      },
-      {
-        "id": "q2",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "2. How do you resolve and extract the IP address from a URL or domain in Linux?",
-        "options": [
-          "dig +short <domain> or getent ahosts <domain> or host <domain>",
-          "curl -O <domain>",
-          "cat /etc/resolv.conf",
-          "route -n"
-        ]
-      },
-      {
-        "id": "q3",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "3. What is an inode in Linux and what happens when inodes run out while disk space is free?",
-        "options": [
-          "Metadata structure of a file; when exhausted, no new files can be created ('No space left on device')",
-          "The raw data content blocks of a file",
-          "A network socket descriptor",
-          "A swap file allocation table"
-        ]
-      },
-      {
-        "id": "q4",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "4. What is LVM (Logical Volume Manager) in Linux?",
-        "options": [
-          "Storage virtualization allowing flexible resizing using Physical Volumes (PV), Volume Groups (VG), and Logical Volumes (LV)",
-          "A cloud synchronization tool that syncs disks to AWS S3",
-          "A hypervisor for managing Kernel-based Virtual Machines",
-          "A legacy filesystem formatting tool"
-        ]
-      },
-      {
-        "id": "q5",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "5. If someone says a process running in a VM is slow, what is your initial triage sequence?",
-        "options": [
-          "Check CPU (top/uptime), Memory & OOM (free -m, dmesg), Disk I/O wait (iostat), and network throughput (iftop)",
-          "Immediately terminate the process with kill -9",
-          "Reboot the virtual machine immediately",
-          "Reinstall the operating system"
-        ]
-      },
-      {
-        "id": "q6",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "6. What is the key difference between Debian and Alpine Linux container base images?",
-        "options": [
-          "Debian uses glibc and apt; Alpine uses lightweight musl libc and apk resulting in tiny image sizes (~5MB)",
-          "Alpine is based on RedHat; Debian is based on Arch",
-          "Debian cannot run in Docker; Alpine runs only in Docker",
-          "Alpine does not support TCP networking"
-        ]
-      },
-      {
-        "id": "q7",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "7. What is a Zombie process (defunct) in Linux and how is it cleaned up?",
-        "options": [
-          "Completed process whose parent hasn't read its exit status via wait(); cleaned by notifying or killing parent process",
-          "Process infected with malware",
-          "Process consuming 100% CPU in an infinite loop",
-          "A daemon running without stdin/stdout"
-        ]
-      },
-      {
-        "id": "q8",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "8. What is the difference between a Soft Link (Symlink) and a Hard Link?",
-        "options": [
-          "Soft link points to file path (can cross filesystems); Hard link points to inode (same filesystem only)",
-          "Hard links break when original file is moved; Soft links never break",
-          "Soft link shares identical inode number as target",
-          "Hard links can only link directories"
-        ]
-      },
-      {
-        "id": "q9",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "9. How do you remove all .tar files recursively from /home/ safely without argument crashes?",
-        "options": [
-          "find /home/ -type f -name '*.tar' -delete (or find ... -print0 | xargs -0 rm -f)",
-          "rm -rf /home/*.tar (non-recursive)",
-          "tar -xzf /home/*.tar --delete",
-          "unlink /home/*.tar"
-        ]
-      },
-      {
-        "id": "q10",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "10. What do the special Bash variables $# and $? represent?",
-        "options": [
-          "$# is number of arguments passed; $? is exit status of last executed command (0 = success)",
-          "$# is process ID; $? is user ID",
-          "$# is background job ID; $? is script file name",
-          "$# is last argument value; $? is first argument value"
-        ]
-      },
-      {
-        "id": "q11",
-        "category": "Bash Challenge",
-        "tag": "tag-bash",
-        "type": "text",
-        "codeFont": true,
-        "title": "11. Bash Challenge: Separate stdout and stderr into Variables",
-        "desc": "How would you capture both stdout and stderr of a command into separate variables in a Bash script?"
-      },
-      {
-        "id": "q12",
-        "category": "Python Challenge",
-        "tag": "tag-python",
-        "type": "text",
-        "codeFont": true,
-        "title": "12. Python Challenge: Reverse a Number",
-        "desc": "Write a Python function to print/return an integer in reverse order."
-      },
-      {
-        "id": "q13",
-        "category": "CI/CD Challenge",
-        "tag": "tag-cicd",
-        "type": "text",
-        "codeFont": true,
-        "title": "13. Jenkins Pipeline Challenge: Scripted vs Declarative & Passing Variables",
-        "desc": "What is the difference between Jenkins scripted and declarative pipeline?\nCan you create an environment variable in one stage and pass it on to another stage in a declarative pipeline? Explain or provide snippet."
-      },
-      {
-        "id": "q14",
-        "category": "Kubernetes Challenge",
-        "tag": "tag-k8s",
-        "type": "text",
-        "title": "14. Kubernetes Challenge: Headless Service in Kubernetes",
-        "desc": "What is a headless service in Kubernetes, how does DNS resolution work for it, and when should you use it?"
-      },
-      {
-        "id": "q15",
-        "category": "Terraform Challenge",
-        "tag": "tag-tf",
-        "type": "text",
-        "title": "15. Terraform Challenge: Data Sources & terraform import",
-        "desc": "What are data sources in Terraform?\nWhat is 'terraform import' and when do you use it?"
-      }
-    ]
-  },
-  "4": {
-    "title": "Quiz Set 4",
-    "questions": [
-      {
-        "id": "q1",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "1. What are the key differences between TCP and UDP protocols?",
-        "options": [
-          "TCP is connection-oriented, reliable (handshake, ACK, retransmission); UDP is connectionless, fast, lightweight",
-          "UDP guarantees delivery; TCP does not",
-          "TCP is for local LAN only; UDP is for WAN",
-          "UDP uses 3-way handshake; TCP does not"
-        ]
-      },
-      {
-        "id": "q2",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "2. How do you use grep with regex to match lines starting with 3 digits followed by 'ERROR'?",
-        "options": [
-          "grep -E '^[0-9]{3} ERROR' filename",
-          "grep '3digits ERROR' filename",
-          "grep -v 'ERROR' filename",
-          "find . -regex 'ERROR'"
-        ]
-      },
-      {
-        "id": "q3",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "3. Which command identifies the Linux distribution, codename, and release version?",
-        "options": [
-          "cat /etc/os-release or hostnamectl or lsb_release -a",
-          "ping -v",
-          "date",
-          "whoami"
-        ]
-      },
-      {
-        "id": "q4",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "4. How do you read a URL / fetch web content in Linux CLI?",
-        "options": [
-          "curl -s <url> or wget -qO- <url>",
-          "cat <url>",
-          "tail -f <url>",
-          "touch <url>"
-        ]
-      },
-      {
-        "id": "q5",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "5. What is the permission difference between chmod 755 and 644?",
-        "options": [
-          "755 gives owner rwx, group/others rx; 644 gives owner rw, group/others r only",
-          "755 is for files only; 644 is for directories only",
-          "644 grants write permission to everyone",
-          "755 locks out all non-root users"
-        ]
-      },
-      {
-        "id": "q6",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "6. What are the 4 DORA metrics in DevOps and why are they measured?",
-        "options": [
-          "Deployment Frequency, Lead Time for Changes, Change Failure Rate, Time to Restore Service (MTTR)",
-          "Docker, OpenShift, RedHat, Ansible metrics",
-          "CPU, Memory, Disk, Network throughput",
-          "Agile, Scrum, Kanban, Waterfall velocity"
-        ]
-      },
-      {
-        "id": "q7",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "7. What is swap space and swappiness in Linux?",
-        "options": [
-          "Disk space used as overflow when RAM is full; swappiness (0-100) controls kernel swapping aggressiveness",
-          "L1 CPU hardware cache",
-          "Encrypted backup partition for kernel dumps",
-          "RAM disk for tmpfs"
-        ]
-      },
-      {
-        "id": "q8",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "8. How do you find files modified in the last 24 hours under /var/log/?",
-        "options": [
-          "find /var/log -type f -mtime -1 (or -mmin -1440)",
-          "ls -24h /var/log",
-          "grep -m 24 /var/log",
-          "stat -all /var/log"
-        ]
-      },
-      {
-        "id": "q9",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "9. How do you kill a stuck process gracefully first, then forcefully?",
-        "options": [
-          "kill -15 <PID> (SIGTERM) allows cleanup; kill -9 <PID> (SIGKILL) forces immediate kill",
-          "kill -9 first, then kill -15",
-          "kill -stop followed by systemctl reboot",
-          "pkill -force"
-        ]
-      },
-      {
-        "id": "q10",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "10. How do you configure passwordless SSH between servers?",
-        "options": [
-          "Run ssh-keygen, then ssh-copy-id user@host to place public key in ~/.ssh/authorized_keys",
-          "Send private key over HTTP",
-          "Delete /etc/ssh/sshd_config",
-          "Set password to null in /etc/shadow"
-        ]
-      },
-      {
-        "id": "q11",
-        "category": "Bash Challenge",
-        "tag": "tag-bash",
-        "type": "text",
-        "codeFont": true,
-        "title": "11. Bash Challenge: set -e, set -u, set -o pipefail",
-        "desc": "Explain how set -e, set -u, and set -o pipefail change the behavior of a Bash script.\nProvide an example for set -e."
-      },
-      {
-        "id": "q12",
-        "category": "Python Challenge",
-        "tag": "tag-python",
-        "type": "text",
-        "codeFont": true,
-        "title": "12. Python Challenge: Binary Search on Sorted Array",
-        "desc": "Given a target integer T and an integer array A sorted in ascending order, write a Python function to find the index i such that A[i] == T or return -1 if there is no such index.\nCorner case: If A is null or empty, return -1."
-      },
-      {
-        "id": "q13",
-        "category": "CI/CD Challenge",
-        "tag": "tag-cicd",
-        "type": "text",
-        "codeFont": true,
-        "title": "13. Jenkins Pipeline Challenge: Multiple Agents & Docker Agents",
-        "desc": "How do you run a Jenkins pipeline on multiple agents?\nHow do you configure and run a pipeline stage using Docker agents?"
-      },
-      {
-        "id": "q14",
-        "category": "Kubernetes Challenge",
-        "tag": "tag-k8s",
-        "type": "text",
-        "title": "14. Kubernetes Challenge: Pod Requests & Limits",
-        "desc": "What are Kubernetes pod requests and limits (CPU and Memory)? What happens when a container exceeds its memory limit vs its CPU limit?"
-      },
-      {
-        "id": "q15",
-        "category": "Terraform Challenge",
-        "tag": "tag-tf",
-        "type": "text",
-        "title": "15. Terraform Challenge: State Locking & Remote State",
-        "desc": "What are Terraform backends and remote state? Why is remote state important?\nWhat is state locking and how does it prevent conflicts?"
-      }
-    ]
-  },
-  "5": {
-    "title": "Quiz Set 5",
-    "questions": [
-      {
-        "id": "q1",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "1. In Bash piping (cmd1 | cmd2 | cmd3), how do you get exit codes of each stage?",
-        "options": [
-          "${PIPESTATUS[@]} array in Bash",
-          "$? returns an array of all exit codes",
-          "$*",
-          "cat /proc/exit_codes"
-        ]
-      },
-      {
-        "id": "q2",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "2. What are Ansible Group vars and Host vars, and what directory structure is required?",
-        "options": [
-          "group_vars/<group>.yml applies to inventory groups; host_vars/<host>.yml applies overrides to individual hosts",
-          "Stored only in /etc/environment",
-          "Hardcoded within playbook task blocks",
-          "Compiled into the Linux kernel"
-        ]
-      },
-      {
-        "id": "q3",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "3. What are the Four Golden Signals of monitoring according to Google SRE?",
-        "options": [
-          "Latency, Traffic, Errors, Saturation",
-          "CPU, Memory, Disk, Network",
-          "Deployment, Rollback, Testing, Monitoring",
-          "Ping, Traceroute, DNS, SSL"
-        ]
-      },
-      {
-        "id": "q4",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "4. What is the difference between git pull, git fetch, and git rebase?",
-        "options": [
-          "git fetch downloads commits without modifying work branch; git pull = fetch + merge; git rebase reapplies commits onto new base",
-          "git fetch deletes remote branches; git pull clones repos",
-          "git pull does not update local code; git fetch does",
-          "git rebase is identical to git clone"
-        ]
-      },
-      {
-        "id": "q5",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "5. What does git stash and git stash apply do?",
-        "options": [
-          "git stash saves uncommitted work to stash stack; git stash apply restores those changes without dropping them from stack",
-          "git stash commits code permanently to main",
-          "git stash deletes uncommitted files forever",
-          "git stash pushes code to remote GitHub"
-        ]
-      },
-      {
-        "id": "q6",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "6. How do you resolve Git merge conflicts from the command line?",
-        "options": [
-          "Inspect conflict markers (<<<<<<<, =======, >>>>>>>), edit to resolved state, run git add, then git commit",
-          "Delete the .git directory",
-          "Run git push --force immediately",
-          "Run git clean -fd to delete all files"
-        ]
-      },
-      {
-        "id": "q7",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "7. What is the difference between COPY and ADD in a Dockerfile?",
-        "options": [
-          "COPY copies local files; ADD also auto-extracts local tarballs and supports remote URL sources",
-          "ADD only copies folders; COPY only copies single text files",
-          "COPY is deprecated; only ADD should be used",
-          "ADD runs at container boot; COPY runs at build time"
-        ]
-      },
-      {
-        "id": "q8",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "8. What is the difference between ENTRYPOINT and CMD in Docker?",
-        "options": [
-          "ENTRYPOINT defines default binary/executable; CMD provides default arguments easily overridden at `docker run`",
-          "CMD defines executable and cannot be overridden; ENTRYPOINT is optional",
-          "Both are 100% identical in Docker syntax",
-          "CMD runs with root privileges; ENTRYPOINT runs as nobody"
-        ]
-      },
-      {
-        "id": "q9",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "9. What is the default port of Nginx and how do you change it?",
-        "options": [
-          "Port 80; change `listen 80;` directive in /etc/nginx/nginx.conf or default site config",
-          "Port 443; change in /etc/hosts",
-          "Port 8080; change in /etc/resolv.conf",
-          "Port 22; change in /etc/ssh/sshd_config"
-        ]
-      },
-      {
-        "id": "q10",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "10. What is pom.xml and what is CAB in Release Management?",
-        "options": [
-          "pom.xml = Project Object Model managing Maven dependencies; CAB = Change Advisory Board evaluating release risk",
-          "pom.xml = Python Object Module; CAB = Container Architecture Builder",
-          "pom.xml = Process Output Map; CAB = Cloud Application Backup",
-          "pom.xml = Pipeline Orchestration Model; CAB = Continuous Automated Build"
-        ]
-      },
-      {
-        "id": "q11",
-        "category": "Bash Challenge",
-        "tag": "tag-bash",
-        "type": "text",
-        "codeFont": true,
-        "title": "11. Bash Challenge: Concurrency Lock Mechanism",
-        "desc": "How can you implement a simple lock mechanism in Bash to prevent multiple instances of the same script from running concurrently?"
-      },
-      {
-        "id": "q12",
-        "category": "Python Challenge",
-        "tag": "tag-python",
-        "type": "text",
-        "codeFont": true,
-        "title": "12. Python Challenge: IP Address Frequency Counter",
-        "desc": "Given a list of IP address strings, write a Python function to count the frequency of each IP address and return the result as a dictionary.\nExample input: ['10.0.0.1', '192.168.1.1', '10.0.0.1', '172.16.0.1']"
-      },
-      {
-        "id": "q13",
-        "category": "CI/CD Challenge",
-        "tag": "tag-cicd",
-        "type": "text",
-        "title": "13. CI/CD Challenge: Automated Rollback on Failure",
-        "desc": "In a deployment pipeline, if an application fails health check verification post-deployment, describe how you configure automated rollback to the previous version."
-      },
-      {
-        "id": "q14",
-        "category": "Kubernetes Challenge",
-        "tag": "tag-k8s",
-        "type": "text",
-        "title": "14. Kubernetes Challenge: Fluentd vs Fluent Bit & EFK Logging",
-        "desc": "Where are pod logs stored on a Kubernetes node? What is the difference between Fluentd and Fluent Bit, and how do you streamline logs inside containers to an EFK stack?"
-      },
-      {
-        "id": "q15",
-        "category": "Terraform Challenge",
-        "tag": "tag-tf",
-        "type": "text",
-        "title": "15. Terraform Challenge: count vs for_each",
-        "desc": "What is the difference between count and for_each in Terraform? When should you use which?"
-      }
-    ]
-  },
-  "6": {
-    "title": "Quiz Set 6",
-    "questions": [
-      {
-        "id": "q1",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "1. How do you SSH into GCP / Cloud VMs using private IP?",
-        "options": [
-          "Identity-Aware Proxy (IAP) TCP tunneling: `gcloud compute ssh <vm> --tunnel-through-iap` or via Bastion host",
-          "Assign public IP directly without firewall rules",
-          "Connect over unencrypted HTTP",
-          "Private IPs cannot be accessed via SSH under any circumstances"
-        ]
-      },
-      {
-        "id": "q2",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "2. How do you give a service account access to only one bucket in GCP?",
-        "options": [
-          "Grant bucket-level IAM role (e.g. Storage Object Admin on gs://bucket) instead of project-wide IAM",
-          "Grant Owner role at the GCP Project level",
-          "Upload service account key to a public GitHub repo",
-          "Assign basic viewer role at Organization level"
-        ]
-      },
-      {
-        "id": "q3",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "3. What are network tags in GCP / Cloud VPCs?",
-        "options": [
-          "Metadata labels assigned to VM instances used to apply VPC firewall rules and routes to specific instances",
-          "Cost allocation tags used for billing reports only",
-          "Docker image tags stored in Artifact Registry",
-          "DNS domain record names"
-        ]
-      },
-      {
-        "id": "q4",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "4. What does docker prune do and how do you selectively delete stopped containers?",
-        "options": [
-          "docker system prune removes unused data; `docker container prune` or `docker rm $(docker ps -a -q -f status=exited)` removes stopped containers",
-          "docker stop --all",
-          "docker kill $(docker images)",
-          "systemctl restart docker deletes all stopped containers"
-        ]
-      },
-      {
-        "id": "q5",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "5. What are the main differences between VMs and Docker containers?",
-        "options": [
-          "VMs virtualize hardware and run full guest OS kernels; Containers share host OS kernel using namespaces and cgroups (lightweight, faster)",
-          "Containers have their own virtual BIOS and hardware",
-          "VMs cannot connect to networks; Containers can",
-          "Containers require hypervisors like VMware ESXi"
-        ]
-      },
-      {
-        "id": "q6",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "6. How do you recover an accidentally deleted branch in a Git remote/local repository?",
-        "options": [
-          "Use `git reflog` to locate the commit SHA of the deleted branch tip, then `git checkout -b <branch> <sha>`",
-          "Clone repository from scratch",
-          "A deleted branch cannot be recovered in Git",
-          "Run `git reset --hard HEAD~10`"
-        ]
-      },
-      {
-        "id": "q7",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "7. What are the 3 configuration levels in git config and their precedence?",
-        "options": [
-          "Local (.git/config) > Global (~/.gitconfig) > System (/etc/gitconfig)",
-          "System > Global > Local",
-          "Remote > Local > Global",
-          "Environment > Root > User"
-        ]
-      },
-      {
-        "id": "q8",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "8. What is the use of Ansible handlers and when do they run?",
-        "options": [
-          "Tasks triggered by `notify` directive; run once at the end of the play only if the notifying task caused a state change",
-          "Tasks that run before every play starts",
-          "Background daemons that restart failed tasks",
-          "Functions that format YAML output"
-        ]
-      },
-      {
-        "id": "q9",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "9. How does Ansible Vault work for encrypting secrets in CI/CD?",
-        "options": [
-          "Encrypts variables/files with AES256; decrypted at runtime using `--vault-password-file` or `--ask-vault-pass`",
-          "Uploads secrets to public hashicorp vault",
-          "Hashes passwords using MD5",
-          "Replaces secrets with cleartext in git history"
-        ]
-      },
-      {
-        "id": "q10",
-        "category": "Linux Admin",
-        "tag": "tag-linux",
-        "type": "mcq",
-        "title": "10. What is the difference between Blue-Green and Canary deployment strategies?",
-        "options": [
-          "Blue-Green maintains two identical environments and switches traffic instantly; Canary progressively routes a small % of live traffic to the new version",
-          "Blue-Green is for dev only; Canary is for production only",
-          "Canary deploys to 100% of servers at once; Blue-Green deploys to 10%",
-          "Both require stopping all servers for at least 1 hour"
-        ]
-      },
-      {
-        "id": "q11",
-        "category": "Bash Challenge",
-        "tag": "tag-bash",
-        "type": "text",
-        "codeFont": true,
-        "title": "11. Bash Challenge: Modified Files Monitor",
-        "desc": "Write a Bash script that monitors a directory recursively and prints the names of files that were modified in the last 5 minutes."
-      },
-      {
-        "id": "q12",
-        "category": "Python Challenge",
-        "tag": "tag-python",
-        "type": "text",
-        "codeFont": true,
-        "title": "12. Python Challenge: Access Log Status Code Parser",
-        "desc": "Write a Python function to parse a web access log line and extract the HTTP status code as an integer.\nExample line: '192.168.1.1 - - [04/Nov/2026] \"GET /api/v1/health HTTP/1.1\" 200 1234'"
-      },
-      {
-        "id": "q13",
-        "category": "CI/CD Challenge",
-        "tag": "tag-cicd",
-        "type": "text",
-        "codeFont": true,
-        "title": "13. Ansible & CI/CD Challenge: Rolling Updates with serial",
-        "desc": "In Ansible, what is 'serial' and how do you use it for rolling updates to ensure zero-downtime deployment?"
-      },
-      {
-        "id": "q14",
-        "category": "Kubernetes Challenge",
-        "tag": "tag-k8s",
-        "type": "text",
-        "title": "14. Kubernetes Challenge: Kubernetes Architecture & Request Flow",
-        "desc": "Explain the Kubernetes Architecture (Master and Worker node components). Describe what happens under the hood when a deployment manifest is applied."
-      },
-      {
-        "id": "q15",
-        "category": "Terraform Challenge",
-        "tag": "tag-tf",
-        "type": "text",
-        "title": "15. Terraform Challenge: Lifecycle Rules (create_before_destroy)",
-        "desc": "What are Terraform lifecycle rules (create_before_destroy, ignore_changes, prevent_destroy)? Provide a practical scenario for create_before_destroy."
-      }
-    ]
-  }
-};
-
-    const quizSelector = document.getElementById('quizSelector');
-    const questionsContainer = document.getElementById('questions-container');
-    const quizHeading = document.getElementById('quiz-section-heading');
-    const form = document.getElementById('assessment-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const statusMsg = document.getElementById('status-msg');
-
-    function renderQuiz(setNumber) {
-      const quiz = quizSets[setNumber];
-      if (!quiz) return;
-
-      quizHeading.textContent = `2. Questions (${quiz.title})`;
-      questionsContainer.innerHTML = '';
-
-      quiz.questions.forEach((q) => {
-        const div = document.createElement('div');
-        if (q.type === 'mcq') {
-          div.innerHTML = `
-            <div class="question-card">
-              <div class="q-header">
-                <span class="q-text">${escapeHtml(q.title)}</span>
-                <span class="q-tag ${q.tag}">${q.category}</span>
-              </div>
-              <div class="mcq-options-container">
-                ${q.options.map((opt) => `
-                <label class="mcq-option-label">
-                  <input type="radio" name="${q.id}" value="${escapeHtml(opt)}" required>
-                  <span>${escapeHtml(opt)}</span>
-                </label>`).join('')}
-              </div>
-            </div>
-          `;
-        } else {
-          const codeClass = q.codeFont ? 'code-font' : '';
-          div.innerHTML = `
-            <div class="question-card">
-              <div class="q-header">
-                <span class="q-text">${escapeHtml(q.title)}</span>
-                <span class="q-tag ${q.tag}">${q.category}</span>
-              </div>
-              ${q.desc ? `<div class="q-desc">${escapeHtml(q.desc)}</div>` : ''}
-              <div class="answer-box-wrap">
-                <div class="answer-header-line">
-                  <span class="answer-tag">Answer</span>
-                  <span class="answer-line"></span>
-                </div>
-                <textarea name="${q.id}" class="answer-textarea ${codeClass}" required></textarea>
-              </div>
-            </div>
-          `;
-        }
-        questionsContainer.appendChild(div.firstElementChild);
-      });
-    }
-
-    renderQuiz(1);
-
-    quizSelector.addEventListener('change', (e) => {
-      renderQuiz(e.target.value);
-    });
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const setNumber = quizSelector.value;
-      const currentQuiz = quizSets[setNumber];
-
-      if (!firstName || !lastName || !email) {
-        statusMsg.style.color = 'var(--error)';
-        statusMsg.textContent = 'Please fill out all candidate fields.';
-        return;
-      }
-
-      const formData = new FormData(form);
-      const safeFirst = firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const safeLast = lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const filename = `${safeFirst}_${safeLast}_Quiz_${setNumber}.pdf`;
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Generating PDF...';
-      statusMsg.style.color = 'var(--primary)';
-      statusMsg.textContent = 'Compiling answers into PDF...';
-
-      try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({
-          orientation: 'portrait',
-          unit: 'pt',
-          format: 'a4'
-        });
-
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 40;
-        const contentWidth = pageWidth - (margin * 2);
-
-        let y = margin;
-
-        function checkPage(needed) {
-          if (y + needed > pageHeight - 50) {
-            doc.addPage();
-            y = margin;
-          }
-        }
-
-        // Header Banner
-        doc.setFillColor(15, 23, 42);
-        doc.rect(margin, y, contentWidth, 38, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(13);
-        doc.text(`DevOps Technical Assessment — ${currentQuiz.title}`, margin + 14, y + 24);
-        y += 48;
-
-        // Candidate Info Card
-        doc.setFillColor(248, 250, 252);
-        doc.setDrawColor(203, 213, 225);
-        doc.roundedRect(margin, y, contentWidth, 68, 4, 4, 'FD');
-
-        doc.setFontSize(9.5);
-        doc.setTextColor(71, 85, 105);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Candidate Name:', margin + 14, y + 20);
-        doc.text('Email Address:', margin + 14, y + 38);
-        doc.text('Assessment Set:', margin + 14, y + 56);
-
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(15, 23, 42);
-        doc.text(`${firstName} ${lastName}`, margin + 120, y + 20);
-        doc.text(email, margin + 120, y + 38);
-        doc.text(`${currentQuiz.title} (Submitted: ${new Date().toLocaleString()})`, margin + 120, y + 56);
-        y += 82;
-
-        // Section Divider
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(2, 132, 199);
-        doc.text('Candidate Responses (10 MCQs + 5 Challenges)', margin, y);
-        doc.setDrawColor(2, 132, 199);
-        doc.setLineWidth(1);
-        doc.line(margin, y + 4, margin + contentWidth, y + 4);
-        y += 18;
-
-        currentQuiz.questions.forEach((q) => {
-          const rawAnswer = formData.get(q.id) || 'No response provided';
-
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(10);
-          const fullQuestionTitle = `[${q.category}] ${q.title}`;
-          const qLines = doc.splitTextToSize(fullQuestionTitle, contentWidth);
-          const qHeight = qLines.length * 13;
-
-          let descLines = [];
-          let descHeight = 0;
-          if (q.desc) {
-            doc.setFont('helvetica', 'italic');
-            doc.setFontSize(8.5);
-            descLines = doc.splitTextToSize(q.desc, contentWidth - 16);
-            descHeight = (descLines.length * 11) + 6;
-          }
-
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(9.5);
-          const answerPrefix = q.type === 'mcq' ? 'Selected Answer: ' : '';
-          const ansLines = doc.splitTextToSize(answerPrefix + rawAnswer, contentWidth - 24);
-          const ansHeight = (ansLines.length * 13) + 14;
-
-          checkPage(qHeight + descHeight + ansHeight + 18);
-
-          doc.setFont('helvetica', 'bold');
-          doc.setTextColor(15, 23, 42);
-          doc.setFontSize(10);
-          doc.text(qLines, margin, y);
-          y += qHeight + 2;
-
-          if (q.desc) {
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(100, 116, 139);
-            doc.setFontSize(8.5);
-            doc.text(descLines, margin + 8, y + 8);
-            y += descHeight;
-          }
-
-          // Card for Answer
-          if (q.type === 'mcq') {
-            doc.setFillColor(240, 249, 255); // sky-50
-            doc.setDrawColor(186, 230, 253);
-            doc.roundedRect(margin, y, contentWidth, ansHeight, 3, 3, 'FD');
-            doc.setFillColor(2, 132, 199);
-            doc.rect(margin, y, 3.5, ansHeight, 'F');
-
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(3, 105, 161);
-            doc.setFontSize(9.5);
-            doc.text(ansLines, margin + 12, y + 13);
-          } else {
-            doc.setFillColor(241, 245, 249);
-            doc.setDrawColor(226, 232, 240);
-            doc.roundedRect(margin, y, contentWidth, ansHeight, 3, 3, 'FD');
-            doc.setFillColor(2, 132, 199);
-            doc.rect(margin, y, 3.5, ansHeight, 'F');
-
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(30, 41, 59);
-            doc.setFontSize(9.5);
-            doc.text(ansLines, margin + 12, y + 13);
-          }
-
-          y += ansHeight + 14;
-        });
-
-        const totalPages = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-          doc.setPage(i);
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(`Candidate: ${firstName} ${lastName} (${email}) — ${currentQuiz.title}`, margin, pageHeight - 20);
-          doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 20, { align: 'right' });
-        }
-
-        doc.save(filename);
-        statusMsg.style.color = 'var(--success)';
-        statusMsg.textContent = `Downloaded: ${filename}`;
-      } catch (err) {
-        console.error('PDF error:', err);
-        statusMsg.style.color = 'var(--error)';
-        statusMsg.textContent = 'Error creating PDF: ' + err.message;
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit & Download PDF';
-      }
-    });
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-  </script>
 </body>
 </html>
