@@ -631,6 +631,14 @@
             <p>Your session credentials are for one-time use during this interview session only.</p>
           </div>
         </div>
+
+        <div class="rule-item">
+          <span class="rule-icon">&#128218;</span>
+          <div>
+            <strong>Kubernetes Documentation Permitted</strong>
+            <p>For the hands-on Kubernetes challenge, you are allowed to reference the <a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener" style="color: var(--primary); font-weight: 600; text-decoration: underline;">official Kubernetes documentation</a>.</p>
+          </div>
+        </div>
       </div>
 
       <label class="agreement-label">
@@ -1071,6 +1079,9 @@ Example line: &#039;192.168.1.1 - - [04/Nov/2026] &quot;GET /api/v1/health HTTP/
           <span class="q-tag tag-k8s">Kubernetes Challenge</span>
         </div>
         <div class="q-desc">Write a Kubernetes YAML manifest in namespace 'monitoring' that creates: 1) A Secret named 'db-credentials' with keys 'username' and 'password' (base64 encoded). 2) A Deployment named 'analytics-engine' (image: 'analytics:latest', 2 replicas) mounting the Secret as individual environment variables (DB_USER and DB_PASS). 3) A HorizontalPodAutoscaler (HPA) targeting this deployment to scale between 2 and 10 replicas when CPU utilization exceeds 75%.</div>
+        <div style="margin-top: 10px; padding: 8px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 0.84rem; color: #166534;">
+          <strong>&#128218; Documentation Permitted:</strong> You may reference the official Kubernetes documentation at <a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener" style="color: #15803d; font-weight: 700; text-decoration: underline;">https://kubernetes.io/docs/home/</a>.
+        </div>
         <div class="answer-box-wrap">
           <div class="answer-header-line">
             <span class="answer-tag">Answer</span>
