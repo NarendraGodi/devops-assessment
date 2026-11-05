@@ -1,3 +1,4 @@
 # Ignore sensitive local files
 *.env
 users.json
+.wrangler

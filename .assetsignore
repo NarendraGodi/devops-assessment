@@ -1,0 +1,6 @@
+_worker.js
+wrangler.json
+.git
+.gitignore
+CREDENTIALS.md
+node_modules
