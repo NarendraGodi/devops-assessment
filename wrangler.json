@@ -1,0 +1,14 @@
+{
+  "name": "devops-assessment",
+  "main": "_worker.js",
+  "compatibility_date": "2024-09-23",
+  "assets": {
+    "directory": "."
+  },
+  "kv_namespaces": [
+    {
+      "binding": "ASSESSMENT_KV",
+      "id": "9261c5e964d2441aa046864aeee52c94"
+    }
+  ]
+}
