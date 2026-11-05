@@ -207,6 +207,7 @@
         <p>1-Click candidate invitation generator &bull; Real-time credential assignment tracker</p>
       </div>
       <div class="header-right">
+        <span id="sync-pill" class="stat-pill" style="font-size: 0.78rem; background: #f1f5f9; color: #64748b;">&#9899; Checking Cloud Sync...</span>
         <a href="index.html" target="_blank" class="btn-lock">&larr; Candidate Portal</a>
         <button type="button" class="btn-lock" id="btn-logout">&#128274; Lock Session</button>
       </div>
@@ -1543,6 +1544,57 @@
       return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
+    // Live Cloudflare KV Synchronization with LocalStorage Fallback
+    let liveKVConnected = false;
+
+    function updateSyncBadge(online) {
+      const pill = document.getElementById('sync-pill');
+      if (!pill) return;
+      if (online) {
+        pill.innerHTML = '&#9889; Cloud KV Synced';
+        pill.style.background = '#dcfce7';
+        pill.style.color = '#15803d';
+      } else {
+        pill.innerHTML = '&#9899; Local Mode';
+        pill.style.background = '#f1f5f9';
+        pill.style.color = '#64748b';
+      }
+    }
+
+    async function syncWithKV() {
+      try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.used)) {
+            liveKVConnected = true;
+            updateSyncBadge(true);
+            const store = getUsedStore();
+            data.used.forEach(u => { store[u] = true; });
+            localStorage.setItem('devops_assigned_creds', JSON.stringify(store));
+            renderTable();
+            updateStats();
+            return;
+          }
+        }
+      } catch (e) {
+        // Fall through to offline mode
+      }
+      updateSyncBadge(false);
+    }
+
+    async function pushKVUpdate(action, username, usernames = null) {
+      try {
+        await fetch('/api/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, username, usernames })
+        });
+      } catch (e) {
+        console.warn('KV update failed, saved locally');
+      }
+    }
+
     // Local Storage helpers for tracking used accounts per interviewer
     function getUsedStore() {
       try {
@@ -1559,26 +1611,32 @@
 
     function toggleUsed(username) {
       const store = getUsedStore();
+      let action = 'add';
       if (store[username]) {
         delete store[username];
+        action = 'remove';
       } else {
         store[username] = new Date().toISOString();
+        action = 'add';
       }
       localStorage.setItem('devops_assigned_creds', JSON.stringify(store));
       renderTable();
       updateStats();
+      pushKVUpdate(action, username);
     }
 
     function resetLabUsed(labNum) {
       if (!confirm(`Reset all assigned credentials for Quiz Set ${labNum} back to Available?`)) return;
       const store = getUsedStore();
       const list = ALL_CREDS[labNum] || [];
-      list.forEach(item => {
-        delete store[item.username];
+      const unames = list.map(item => item.username);
+      unames.forEach(u => {
+        delete store[u];
       });
       localStorage.setItem('devops_assigned_creds', JSON.stringify(store));
       renderTable();
       updateStats();
+      pushKVUpdate('reset_lab', null, unames);
       showToast(`Quiz Set ${labNum} reset to Available`);
     }
 
@@ -1759,6 +1817,8 @@ Instructions:
       updateOverview();
       renderTable();
       updateStats();
+      syncWithKV();
+      setInterval(syncWithKV, 8000);
     }
 
     // Initial check
