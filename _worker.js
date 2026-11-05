@@ -1,3 +1,5 @@
+import baseCreds from "./quiz_credentials.json";
+
 async function sha256Hex(str) {
   const buf = new TextEncoder().encode(str);
   const digest = await crypto.subtle.digest("SHA-256", buf);
@@ -25,7 +27,120 @@ export default {
       });
     }
 
-    // 1. Admin Passphrase Authentication
+    // 1. Get Custom Password Overrides (for admin dashboard display)
+    if (url.pathname === "/api/creds-overrides" && request.method === "GET") {
+      let overrides = {};
+      if (kv) {
+        overrides = await kv.get("custom_user_creds", { type: "json" }) || {};
+      }
+      return new Response(JSON.stringify({ overrides }), {
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+      });
+    }
+
+    // 2. Inline Update Candidate Password
+    if (url.pathname === "/api/update-user-password" && request.method === "POST") {
+      if (!kv) {
+        return new Response(JSON.stringify({ error: "Cloudflare KV not bound." }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
+      }
+      try {
+        const body = await request.json();
+        const username = (body.username || "").trim();
+        const newPassword = (body.newPassword || "").trim();
+
+        if (!username || !newPassword) {
+          return new Response(JSON.stringify({ error: "Username and new password are required." }), {
+            status: 400,
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+          });
+        }
+
+        const newHash = await sha256Hex(newPassword);
+
+        // Store plain text for examiner display
+        let credsMap = await kv.get("custom_user_creds", { type: "json" }) || {};
+        credsMap[username] = newPassword;
+        await kv.put("custom_user_creds", JSON.stringify(credsMap));
+
+        // Store hash for candidate login verification
+        let hashesMap = await kv.get("custom_user_hashes", { type: "json" }) || {};
+        hashesMap[username] = newHash;
+        await kv.put("custom_user_hashes", JSON.stringify(hashesMap));
+
+        return new Response(JSON.stringify({ success: true, username, newPassword }), {
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
+      }
+    }
+
+    // 3. Live Candidate Login Verification
+    if (url.pathname === "/api/verify-credential" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const username = (body.username || "").trim();
+        const password = (body.password || "").trim();
+        const quizNum = parseInt(body.quizNum, 10);
+
+        if (!username || !password || !quizNum) {
+          return new Response(JSON.stringify({ valid: false, error: "Missing required fields." }), {
+            status: 400,
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+          });
+        }
+
+        const inputHash = await sha256Hex(password);
+
+        // Check if user belongs to another quiz
+        const belongsToCurrentQuiz = baseCreds[quizNum] && (username in baseCreds[quizNum]);
+        let otherQuiz = null;
+        for (let q = 1; q <= 10; q++) {
+          if (q !== quizNum && baseCreds[q] && (username in baseCreds[q])) {
+            otherQuiz = q;
+            break;
+          }
+        }
+
+        if (otherQuiz && !belongsToCurrentQuiz) {
+          return new Response(JSON.stringify({ valid: false, otherQuiz }), {
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+          });
+        }
+
+        // Check custom overrides first, then base hash
+        let customHashes = {};
+        if (kv) {
+          customHashes = await kv.get("custom_user_hashes", { type: "json" }) || {};
+        }
+
+        let expectedHash = null;
+        if (customHashes[username]) {
+          expectedHash = customHashes[username];
+        } else if (belongsToCurrentQuiz) {
+          expectedHash = baseCreds[quizNum][username];
+        }
+
+        const valid = (expectedHash && inputHash === expectedHash);
+
+        return new Response(JSON.stringify({ valid }), {
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ valid: false, error: err.message }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
+      }
+    }
+
+    // 4. Admin Passphrase Authentication
     if (url.pathname === "/api/admin-auth" && request.method === "POST") {
       try {
         const body = await request.json();
@@ -55,7 +170,7 @@ export default {
       }
     }
 
-    // 2. Change Admin Passphrase
+    // 5. Change Admin Passphrase
     if (url.pathname === "/api/admin-change-password" && request.method === "POST") {
       if (!kv) {
         return new Response(JSON.stringify({ error: "Cloudflare KV is not bound." }), {
@@ -109,7 +224,7 @@ export default {
       }
     }
 
-    // 3. API endpoint for real-time interviewer credential sync
+    // 6. API Endpoint for Assigned Status Sync
     if (url.pathname === "/api/status") {
       if (request.method === "GET") {
         if (!kv) {

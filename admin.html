@@ -139,6 +139,29 @@
     tbody tr.is-used td.user-cell { text-decoration: line-through; color: #94a3b8; }
     td { padding: 14px 18px; font-size: 0.9rem; vertical-align: middle; }
     .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; }
+    
+    /* Inline Password Editor */
+    .pass-cell-wrap { display: inline-flex; align-items: center; gap: 8px; }
+    .btn-pass-action {
+      background: none; border: none; cursor: pointer; font-size: 0.95rem;
+      opacity: 0.55; padding: 2px 5px; border-radius: 4px; transition: all 0.15s;
+    }
+    .btn-pass-action:hover { opacity: 1; background: #e0f2fe; }
+    .inline-pass-input {
+      width: 130px; padding: 5px 8px; border: 1.5px solid var(--primary);
+      border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem; outline: none; background: #ffffff;
+    }
+    .btn-save-inline {
+      padding: 5px 9px; background: #16a34a; color: white; border: none;
+      border-radius: 5px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-save-inline:hover { background: #15803d; }
+    .btn-cancel-inline {
+      padding: 5px 8px; background: #e2e8f0; color: #475569; border: none;
+      border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-cancel-inline:hover { background: #cbd5e1; }
     .badge-status {
       display: inline-block; padding: 3px 10px; border-radius: 9999px;
       font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
@@ -1577,6 +1600,90 @@
 
     // Live Cloudflare KV Synchronization with LocalStorage Fallback
     let liveKVConnected = false;
+    let customCredsOverrides = {};
+
+    function getEffectivePassword(username, defaultPass) {
+      return customCredsOverrides[username] || defaultPass;
+    }
+
+    async function syncOverrides() {
+      try {
+        const res = await fetch('/api/creds-overrides');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.overrides) {
+            customCredsOverrides = data.overrides;
+            renderTable();
+          }
+        }
+      } catch (e) {}
+    }
+
+    function startEditPass(username) {
+      const wrap = document.getElementById('wrap-' + username);
+      const editWrap = document.getElementById('edit-wrap-' + username);
+      if (wrap) wrap.style.display = 'none';
+      if (editWrap) {
+        editWrap.style.display = 'inline-flex';
+        const input = document.getElementById('input-' + username);
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }
+    }
+
+    function cancelEditPass(username) {
+      const wrap = document.getElementById('wrap-' + username);
+      const editWrap = document.getElementById('edit-wrap-' + username);
+      if (wrap) wrap.style.display = 'inline-flex';
+      if (editWrap) editWrap.style.display = 'none';
+    }
+
+    function generateRandomPassword(len = 10) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+      let pass = '';
+      for (let i = 0; i < len; i++) {
+        pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return pass;
+    }
+
+    async function regenPass(username) {
+      const newPass = generateRandomPassword(10);
+      if (!confirm(`Generate new random password for ${username}?\nNew Password: ${newPass}`)) return;
+      await updatePasswordRemote(username, newPass);
+    }
+
+    async function saveEditPass(username) {
+      const input = document.getElementById('input-' + username);
+      const newPass = input ? input.value.trim() : '';
+      if (!newPass || newPass.length < 4) {
+        alert('Password must be at least 4 characters.');
+        return;
+      }
+      await updatePasswordRemote(username, newPass);
+    }
+
+    async function updatePasswordRemote(username, newPass) {
+      try {
+        const res = await fetch('/api/update-user-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, newPassword: newPass })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          customCredsOverrides[username] = newPass;
+          renderTable();
+          showToast(`Password for ${username} updated! Old password invalidated.`);
+        } else {
+          alert(data.error || 'Failed to update password.');
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    }
 
     function updateSyncBadge(online) {
       const pill = document.getElementById('sync-pill');
@@ -1863,10 +1970,23 @@
         const tr = document.createElement('tr');
         if (used) tr.className = 'is-used';
 
+        const effectivePass = getEffectivePassword(item.username, item.password);
+
         tr.innerHTML = `
           <td>${item.num}</td>
           <td class="mono user-cell"><strong>${item.username}</strong></td>
-          <td class="mono">${item.password}</td>
+          <td class="mono">
+            <div class="pass-cell-wrap" id="wrap-${item.username}">
+              <span class="pass-val" id="val-${item.username}">${effectivePass}</span>
+              <button type="button" class="btn-pass-action" title="Edit Password" onclick="startEditPass('${item.username}')">&#9999;&#65039;</button>
+              <button type="button" class="btn-pass-action" title="Generate New Password" onclick="regenPass('${item.username}')">&#127922;</button>
+            </div>
+            <div class="pass-edit-wrap" id="edit-wrap-${item.username}" style="display: none; align-items: center; gap: 5px;">
+              <input type="text" class="inline-pass-input" id="input-${item.username}" value="${effectivePass}">
+              <button type="button" class="btn-save-inline" onclick="saveEditPass('${item.username}')">Save</button>
+              <button type="button" class="btn-cancel-inline" onclick="cancelEditPass('${item.username}')">&#10006;</button>
+            </div>
+          </td>
           <td>
             <span class="badge-status ${used ? 'badge-used' : 'badge-available'}">
               ${used ? 'Assigned' : 'Available'}
@@ -1874,7 +1994,7 @@
           </td>
           <td>
             <div class="action-group">
-              <button type="button" class="btn-copy" onclick="copyInvite(${activeLab}, '${item.username}', '${item.password}', '${quizUrl}')">
+              <button type="button" class="btn-copy" onclick="copyInvite(${activeLab}, '${item.username}', '${effectivePass}', '${quizUrl}')">
                 &#128203; Copy Invite
               </button>
               <button type="button" class="btn-toggle-used" onclick="toggleUsed('${item.username}')">
@@ -1940,6 +2060,7 @@ Instructions:
       renderTable();
       updateStats();
       syncWithKV();
+      syncOverrides();
       setInterval(syncWithKV, 8000);
     }
 

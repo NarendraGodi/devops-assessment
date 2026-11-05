@@ -1157,8 +1157,40 @@ After success: build Docker image and push to Docker Hub.</div>
       e.preventDefault();
       const user = authUsername.value.trim();
       const pass = authPassword.value.trim();
-
       const currentQuizNum = 2;
+
+      // 1. Live KV Verification (respects inline edited passwords immediately)
+      try {
+        const verifyRes = await fetch('/api/verify-credential', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass, quizNum: currentQuizNum })
+        });
+        if (verifyRes.ok) {
+          const vData = await verifyRes.json();
+          if (vData.valid) {
+            isCandidateAuthenticated = true;
+            loginOverlay.style.display = 'none';
+            const rulesOverlay = document.getElementById('rules-modal-overlay');
+            if (rulesOverlay) rulesOverlay.style.display = 'flex';
+            return;
+          } else if (vData.otherQuiz) {
+            loginErrorMsg.textContent = `Access Denied: This credential is for Quiz ${vData.otherQuiz} and cannot unlock Quiz 2.`;
+            authPassword.value = '';
+            authPassword.focus();
+            return;
+          } else {
+            loginErrorMsg.textContent = 'Invalid credentials or access revoked for Quiz 2.';
+            authPassword.value = '';
+            authPassword.focus();
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback to local SHA-256 checks if offline
+      }
+
+      // 2. Offline Fallback
       const quizHashes = (window.QUIZ_CREDENTIALS && window.QUIZ_CREDENTIALS[currentQuizNum]) || {};
       const expectedHash = quizHashes[user];
 
@@ -1175,7 +1207,6 @@ After success: build Docker image and push to Docker Hub.</div>
         }
       }
 
-      // Check if candidate is attempting to use credentials from another quiz
       let otherQuiz = null;
       if (window.QUIZ_CREDENTIALS) {
         for (let checkQ = 1; checkQ <= 10; checkQ++) {
