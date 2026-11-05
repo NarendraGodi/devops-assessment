@@ -208,6 +208,7 @@
       </div>
       <div class="header-right">
         <span id="sync-pill" class="stat-pill" style="font-size: 0.78rem; background: #f1f5f9; color: #64748b;">&#9899; Checking Cloud Sync...</span>
+        <button type="button" class="btn-lock" id="btn-open-change-pass">&#128273; Change Passphrase</button>
         <a href="index.html" target="_blank" class="btn-lock">&larr; Candidate Portal</a>
         <button type="button" class="btn-lock" id="btn-logout">&#128274; Lock Session</button>
       </div>
@@ -255,6 +256,36 @@
       <div>DevOps Technical Assessment Platform &bull; Examiner Session Management</div>
       <div class="credit-tag">Designed by Narendra Godi</div>
     </footer>
+  </div>
+
+  <!-- Change Passphrase Modal -->
+  <div id="change-pass-overlay" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); z-index: 10001; align-items: center; justify-content: center; padding: 20px;">
+    <div class="auth-box" style="text-align: left; max-width: 440px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span class="auth-badge" style="margin-bottom: 0;">Security Settings</span>
+        <button type="button" id="btn-close-change-pass" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; line-height: 1;">&times;</button>
+      </div>
+      <h2 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Change Master Passphrase</h2>
+      <p style="font-size: 0.84rem; color: #64748b; margin-bottom: 18px; line-height: 1.45;">Changing this password updates Cloudflare KV immediately and invalidates all previously shared credentials.</p>
+      
+      <form id="change-pass-form">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Current Passphrase *</label>
+        <input type="password" id="cur-pass-input" class="auth-input" required autocomplete="off" placeholder="Enter current passphrase">
+        
+        <label style="font-size: 0.8rem; font-weight: 700; color: #334155; display: block; margin-bottom: 4px; margin-top: 10px;">New Passphrase (min 6 chars) *</label>
+        <input type="password" id="new-pass-input" class="auth-input" required minlength="6" autocomplete="off" placeholder="Enter new master passphrase">
+        
+        <label style="font-size: 0.8rem; font-weight: 700; color: #334155; display: block; margin-bottom: 4px; margin-top: 10px;">Confirm New Passphrase *</label>
+        <input type="password" id="confirm-pass-input" class="auth-input" required minlength="6" autocomplete="off" placeholder="Re-enter new passphrase">
+        
+        <div id="change-pass-msg" style="font-size: 0.84rem; font-weight: 600; min-height: 20px; margin-bottom: 12px;"></div>
+        
+        <div style="display: flex; gap: 10px;">
+          <button type="button" id="btn-cancel-change-pass" class="btn-lock" style="flex: 1; padding: 11px;">Cancel</button>
+          <button type="submit" class="btn-unlock" id="btn-submit-change-pass" style="flex: 1; padding: 11px;">Update Now</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Toast Notification -->
@@ -1664,21 +1695,112 @@
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const val = masterInput.value.trim();
-      const h = await sha256(val);
-      if (h === HASH_1 || h === HASH_2) {
-        sessionStorage.setItem('examiner_authenticated', 'true');
-        checkSession();
-      } else {
-        authErr.textContent = 'Incorrect passphrase. Please try again.';
-        masterInput.value = '';
-        masterInput.focus();
+
+      try {
+        const res = await fetch('/api/admin-auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: val })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated) {
+            sessionStorage.setItem('examiner_authenticated', 'true');
+            authErr.textContent = '';
+            checkSession();
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback offline
+        const h = await sha256(val);
+        if (h === HASH_1 || h === HASH_2) {
+          sessionStorage.setItem('examiner_authenticated', 'true');
+          authErr.textContent = '';
+          checkSession();
+          return;
+        }
       }
+
+      authErr.textContent = 'Incorrect passphrase. Please try again.';
+      masterInput.value = '';
+      masterInput.focus();
     });
 
     btnLogout.addEventListener('click', () => {
       sessionStorage.removeItem('examiner_authenticated');
       checkSession();
     });
+
+    // Change Master Passphrase Modal Logic
+    const changePassOverlay = document.getElementById('change-pass-overlay');
+    const btnOpenChangePass = document.getElementById('btn-open-change-pass');
+    const btnCloseChangePass = document.getElementById('btn-close-change-pass');
+    const btnCancelChangePass = document.getElementById('btn-cancel-change-pass');
+    const changePassForm = document.getElementById('change-pass-form');
+    const curPassInput = document.getElementById('cur-pass-input');
+    const newPassInput = document.getElementById('new-pass-input');
+    const confirmPassInput = document.getElementById('confirm-pass-input');
+    const changePassMsg = document.getElementById('change-pass-msg');
+
+    if (btnOpenChangePass) {
+      btnOpenChangePass.addEventListener('click', () => {
+        changePassOverlay.style.display = 'flex';
+        curPassInput.value = '';
+        newPassInput.value = '';
+        confirmPassInput.value = '';
+        changePassMsg.textContent = '';
+        curPassInput.focus();
+      });
+    }
+
+    function closeChangePass() {
+      if (changePassOverlay) changePassOverlay.style.display = 'none';
+    }
+    if (btnCloseChangePass) btnCloseChangePass.addEventListener('click', closeChangePass);
+    if (btnCancelChangePass) btnCancelChangePass.addEventListener('click', closeChangePass);
+
+    if (changePassForm) {
+      changePassForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const cur = curPassInput.value.trim();
+        const next = newPassInput.value.trim();
+        const conf = confirmPassInput.value.trim();
+
+        if (next !== conf) {
+          changePassMsg.style.color = 'var(--danger)';
+          changePassMsg.textContent = 'New passwords do not match.';
+          return;
+        }
+        if (next.length < 6) {
+          changePassMsg.style.color = 'var(--danger)';
+          changePassMsg.textContent = 'New password must be at least 6 characters.';
+          return;
+        }
+
+        changePassMsg.style.color = 'var(--primary)';
+        changePassMsg.textContent = 'Updating passphrase in Cloudflare KV...';
+
+        try {
+          const res = await fetch('/api/admin-change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentPassword: cur, newPassword: next })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            closeChangePass();
+            showToast('✅ Master Passphrase updated in KV! Old credentials invalidated.');
+          } else {
+            changePassMsg.style.color = 'var(--danger)';
+            changePassMsg.textContent = data.error || 'Failed to update passphrase.';
+          }
+        } catch (err) {
+          changePassMsg.style.color = 'var(--danger)';
+          changePassMsg.textContent = 'Network error: ' + err.message;
+        }
+      });
+    }
 
     // Dashboard Tabs
     function renderTabs() {
