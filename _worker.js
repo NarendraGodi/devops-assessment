@@ -1,3 +1,4 @@
+// Cloudflare Worker for DevOps Assessment Platform v2.1.0
 import baseCreds from "./quiz_credentials.json";
 
 async function sha256Hex(str) {
@@ -98,11 +99,15 @@ export default {
 
         const inputHash = await sha256Hex(password);
 
+        const creds = (baseCreds && baseCreds.default) ? baseCreds.default : baseCreds;
+        const qKey = String(quizNum);
+
         // Check if user belongs to another quiz
-        const belongsToCurrentQuiz = baseCreds[quizNum] && (username in baseCreds[quizNum]);
+        const belongsToCurrentQuiz = creds && creds[qKey] && (username in creds[qKey]);
         let otherQuiz = null;
         for (let q = 1; q <= 10; q++) {
-          if (q !== quizNum && baseCreds[q] && (username in baseCreds[q])) {
+          const checkKey = String(q);
+          if (q !== quizNum && creds && creds[checkKey] && (username in creds[checkKey])) {
             otherQuiz = q;
             break;
           }
@@ -124,7 +129,7 @@ export default {
         if (customHashes[username]) {
           expectedHash = customHashes[username];
         } else if (belongsToCurrentQuiz) {
-          expectedHash = baseCreds[quizNum][username];
+          expectedHash = creds[qKey][username];
         }
 
         const valid = (expectedHash && inputHash === expectedHash);
