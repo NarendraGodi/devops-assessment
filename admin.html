@@ -125,41 +125,51 @@
     /* Table */
     .table-card {
       background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
-      overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow-x: auto; -webkit-overflow-scrolling: touch; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
+    table { width: 100%; min-width: 720px; border-collapse: collapse; text-align: left; }
     thead th {
-      background: #f8fafc; padding: 12px 18px; font-size: 0.78rem; font-weight: 700;
+      background: #f8fafc; padding: 12px 16px; font-size: 0.78rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; border-bottom: 1px solid var(--border);
+      white-space: nowrap;
     }
     tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #f8fafc; }
     tbody tr.is-used { opacity: 0.62; background: #fafafa; }
     tbody tr.is-used td.user-cell { text-decoration: line-through; color: #94a3b8; }
-    td { padding: 14px 18px; font-size: 0.9rem; vertical-align: middle; }
+    td { padding: 12px 16px; font-size: 0.9rem; vertical-align: middle; white-space: nowrap; }
     .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; }
     
     /* Inline Password Editor */
-    .pass-cell-wrap { display: inline-flex; align-items: center; gap: 8px; }
-    .btn-pass-action {
-      background: none; border: none; cursor: pointer; font-size: 0.95rem;
-      opacity: 0.55; padding: 2px 5px; border-radius: 4px; transition: all 0.15s;
+    .pass-cell-wrap {
+      display: inline-flex; align-items: center; gap: 8px;
+      white-space: nowrap; flex-shrink: 0;
     }
-    .btn-pass-action:hover { opacity: 1; background: #e0f2fe; }
+    .pass-val { font-weight: 600; color: #0f172a; }
+    .btn-pass-action {
+      background: #f1f5f9; border: 1px solid #cbd5e1; cursor: pointer; font-size: 0.95rem;
+      opacity: 1; padding: 4px 7px; border-radius: 6px; transition: all 0.15s;
+      flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+      line-height: 1; min-width: 30px; min-height: 30px;
+    }
+    .btn-pass-action:hover { opacity: 1; background: #e0f2fe; border-color: var(--primary); }
+    .pass-edit-wrap {
+      display: none; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;
+    }
     .inline-pass-input {
-      width: 130px; padding: 5px 8px; border: 1.5px solid var(--primary);
+      width: 190px; max-width: 100%; padding: 6px 10px; border: 1.5px solid var(--primary);
       border-radius: 6px; font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem; outline: none; background: #ffffff;
+      font-size: 0.85rem; outline: none; background: #ffffff;
     }
     .btn-save-inline {
-      padding: 5px 9px; background: #16a34a; color: white; border: none;
-      border-radius: 5px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      padding: 6px 10px; background: #16a34a; color: white; border: none;
+      border-radius: 5px; font-size: 0.78rem; font-weight: 700; cursor: pointer; flex-shrink: 0;
     }
     .btn-save-inline:hover { background: #15803d; }
     .btn-cancel-inline {
-      padding: 5px 8px; background: #e2e8f0; color: #475569; border: none;
-      border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      padding: 6px 9px; background: #e2e8f0; color: #475569; border: none;
+      border-radius: 5px; font-size: 0.78rem; font-weight: 600; cursor: pointer; flex-shrink: 0;
     }
     .btn-cancel-inline:hover { background: #cbd5e1; }
     .badge-status {
@@ -170,7 +180,7 @@
     .badge-used { background: #f1f5f9; color: #64748b; }
 
     /* Action buttons */
-    .action-group { display: flex; gap: 8px; align-items: center; }
+    .action-group { display: flex; gap: 8px; align-items: center; white-space: nowrap; }
     .btn-copy {
       padding: 6px 12px; background: var(--primary); color: #ffffff; border: none;
       border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
@@ -182,6 +192,25 @@
       font-size: 0.8rem; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.15s;
     }
     .btn-toggle-used:hover { background: #f1f5f9; }
+
+    .mobile-scroll-hint {
+      display: none;
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 14px 10px; }
+      header { padding: 16px; flex-direction: column; align-items: flex-start; gap: 14px; }
+      .header-right { width: 100%; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
+      .overview-card { padding: 16px; flex-direction: column; align-items: flex-start; gap: 12px; }
+      .overview-stats { width: 100%; justify-content: space-between; }
+      .filter-bar { flex-direction: column; }
+      .btn-reset-lab { width: 100%; text-align: center; }
+      .mobile-scroll-hint { display: block; }
+    }
 
     /* Toast Notification */
     #toast {
@@ -258,6 +287,8 @@
       <input type="text" id="filter-search" class="search-input" placeholder="Filter by username or status...">
       <button type="button" id="btn-reset-lab" class="btn-reset-lab">Reset Used State for This Lab</button>
     </div>
+
+    <div class="mobile-scroll-hint">&#128073; Swipe sideways to view passwords &amp; actions</div>
 
     <!-- Credential Table -->
     <div class="table-card">
