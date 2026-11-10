@@ -588,7 +588,127 @@
       border: 1px solid #bae6fd;
       font-size: 0.82rem;
     }
-</style>
+
+    /* Submission Success & Chat Copy Modal */
+    #submission-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .submission-card {
+      width: 100%;
+      max-width: 580px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 30px 26px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    .submission-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #166534;
+      background: #dcfce7;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .copy-banner {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: #15803d;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-copy-chat {
+      width: 100%;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 1.02rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+      margin-bottom: 10px;
+    }
+
+    .btn-copy-chat:hover {
+      background: #0369a1;
+    }
+
+    .btn-backup-pdf {
+      width: 100%;
+      background: #f8fafc;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s;
+      margin-bottom: 14px;
+    }
+
+    .btn-backup-pdf:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .chat-preview-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      line-height: 1.45;
+      text-align: left;
+      padding: 12px;
+      border-radius: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #334155;
+      margin-bottom: 14px;
+    }
+
+  </style>
 </head>
 <body>
 
@@ -617,10 +737,10 @@
         </div>
 
         <div class="rule-item">
-          <span class="rule-icon">&#128196;</span>
+          <span class="rule-icon">&#128203;</span>
           <div>
-            <strong>Automated PDF Report Download</strong>
-            <p>Upon clicking submit, your assessment report will automatically download as <code>firstname_lastname_Quiz Set 2.pdf</code> with all responses recorded.</p>
+            <strong>Instant Assessment Submission & Chat Copy</strong>
+            <p>Upon clicking submit, your responses are automatically compiled with a 1-click button to copy everything into interview chat (Zoom / Teams / Slack), plus an optional backup PDF.</p>
           </div>
         </div>
 
@@ -684,6 +804,36 @@
     </div>
   </div>
 
+    <!-- Submission Success & Copy to Chat Modal -->
+  <div id="submission-modal-overlay">
+    <div class="submission-card">
+      <div class="submission-badge">&#10004; Assessment Submitted</div>
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Assessment Completed!</h2>
+      <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 14px;">Your responses have been compiled. Copy and paste them directly into your interview chat.</p>
+
+      <div class="copy-banner" id="copy-status-banner">
+        <span>&#128203;</span> <span>Copied to clipboard! Ready to paste into chat (Ctrl + V).</span>
+      </div>
+
+      <button type="button" class="btn-copy-chat" id="btn-copy-chat">
+        <span>&#128203;</span> Copy Assessment to Clipboard
+      </button>
+
+      <button type="button" class="btn-backup-pdf" id="btn-backup-pdf">
+        <span>&#128196;</span> Download Backup PDF
+      </button>
+
+      <div style="text-align: left; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 5px;">Response Preview:</div>
+      <div class="chat-preview-box" id="chat-preview-text"></div>
+
+      <a href="index.html" class="btn-return-home" style="margin-top: 6px;">&larr; Return to Quiz Selection</a>
+
+      <div class="rules-credit" style="margin-top: 18px;">
+        Designed by <strong>Narendra Godi</strong>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <header>
       <div class="header-top">
@@ -693,7 +843,7 @@
         </div>
         <span class="badge">Quiz Set 2</span>
       </div>
-      <p class="subtitle">Enter candidate info and answer all 16 technical questions below (10 Linux MCQs + 6 Challenges). Submitting automatically downloads <code>firstname_lastname_Quiz Set 2.pdf</code>.</p>
+      <p class="subtitle">Enter candidate info and answer all 16 technical questions below (10 Linux MCQs + 6 Challenges). Submitting compiles your full responses ready to copy directly into interview chat.</p>
     </header>
 
     <form id="assessment-form">
@@ -1128,7 +1278,7 @@ After success: build Docker image and push to Docker Hub.</div>
     
       </div>
 
-      <button type="submit" class="btn-submit" id="submit-btn">Submit & Download PDF</button>
+      <button type="submit" class="btn-submit" id="submit-btn">Submit Assessment &rarr;</button>
       <div id="status-msg"></div>
     </form>
 
@@ -1346,6 +1496,51 @@ After success: build Docker image and push to Docker Hub.</div>
   }
 ];
 
+    let lastCompiledPdfDoc = null;
+    let lastCompiledFilename = '';
+    let lastCompiledChatText = '';
+
+    function buildChatReport(firstName, lastName, email, formData) {
+      const divider = '==================================================';
+      const subDivider = '--------------------------------------------------';
+      const timestamp = new Date().toLocaleString();
+
+      let out = [];
+      out.push(divider);
+      out.push('DEVOPS TECHNICAL ASSESSMENT REPORT');
+      out.push(divider);
+      out.push(`Candidate:   ${firstName} ${lastName}`);
+      out.push(`Email:       ${email}`);
+      out.push(`Assessment:  ${quizTitle}`);
+      out.push(`Submitted:   ${timestamp}`);
+      out.push(`Designed by: Narendra Godi`);
+      out.push(divider);
+      out.push('');
+
+      questionsMeta.forEach((q, idx) => {
+        const rawAns = formData.get(q.id) || '(No response provided)';
+        const cleanTitle = q.title.replace(/^\d+\.\s*/, '');
+        out.push(`[${idx + 1}. ${q.category.toUpperCase()}]`);
+        out.push(`Q: ${cleanTitle}`);
+        if (q.desc) {
+          out.push(`Context: ${q.desc}`);
+        }
+        out.push('A:');
+        out.push(rawAns);
+        out.push('');
+        if (idx < questionsMeta.length - 1) {
+          out.push(subDivider);
+          out.push('');
+        }
+      });
+
+      out.push(divider);
+      out.push('END OF ASSESSMENT REPORT');
+      out.push(divider);
+
+      return out.join('\n');
+    }
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -1362,13 +1557,12 @@ After success: build Docker image and push to Docker Hub.</div>
       const formData = new FormData(form);
       const safeFirst = firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
       const safeLast = lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const filename = `${safeFirst}_${safeLast}_${quizTitle.replace(/\s+/g, '_')}.pdf`;
+      lastCompiledFilename = `${safeFirst}_${safeLast}_${quizTitle.replace(/\s+/g, '_')}.pdf`;
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Generating PDF...';
-      statusMsg.style.color = 'var(--primary)';
-      statusMsg.textContent = 'Compiling answers into PDF...';
+      // 1. Compile Chat Plaintext Report
+      lastCompiledChatText = buildChatReport(firstName, lastName, email, formData);
 
+      // 2. Prepare Backup PDF in memory
       try {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({
@@ -1381,7 +1575,6 @@ After success: build Docker image and push to Docker Hub.</div>
         const pageHeight = doc.internal.pageSize.getHeight();
         const margin = 40;
         const contentWidth = pageWidth - (margin * 2);
-
         let y = margin;
 
         function checkPage(needed) {
@@ -1397,35 +1590,33 @@ After success: build Docker image and push to Docker Hub.</div>
         doc.setTextColor(255, 255, 255);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(13);
-        doc.text(`DevOps Technical Assessment — ${quizTitle}`, margin + 14, y + 24);
+        doc.text('DEVOPS TECHNICAL ASSESSMENT REPORT', margin + 14, y + 24);
         y += 48;
 
-        // Candidate Info Card
+        // Info Box
         doc.setFillColor(248, 250, 252);
         doc.setDrawColor(203, 213, 225);
         doc.roundedRect(margin, y, contentWidth, 68, 4, 4, 'FD');
 
         doc.setFontSize(9.5);
         doc.setTextColor(71, 85, 105);
-        doc.setFont('helvetica', 'bold');
         doc.text('Candidate Name:', margin + 14, y + 20);
         doc.text('Email Address:', margin + 14, y + 38);
         doc.text('Assessment Set:', margin + 14, y + 56);
 
-        doc.setFont('helvetica', 'normal');
         doc.setTextColor(15, 23, 42);
         doc.text(`${firstName} ${lastName}`, margin + 120, y + 20);
         doc.text(email, margin + 120, y + 38);
         doc.text(`${quizTitle} (Submitted: ${new Date().toLocaleString()})`, margin + 120, y + 56);
         y += 82;
 
-        // Section Divider
+        // Section Title
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
         doc.setTextColor(2, 132, 199);
-        doc.text('Candidate Responses (10 Linux MCQs + 6 Challenges)', margin, y);
+        doc.text('ASSESSMENT RESPONSES', margin, y);
         doc.setDrawColor(2, 132, 199);
-        doc.setLineWidth(1);
+        doc.setLineWidth(1.5);
         doc.line(margin, y + 4, margin + contentWidth, y + 4);
         y += 18;
 
@@ -1506,18 +1697,65 @@ After success: build Docker image and push to Docker Hub.</div>
           doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 20, { align: 'right' });
         }
 
-        doc.save(filename);
-        statusMsg.style.color = 'var(--success)';
-        statusMsg.textContent = `Downloaded: ${filename}`;
+        lastCompiledPdfDoc = doc;
       } catch (err) {
-        console.error('PDF error:', err);
-        statusMsg.style.color = 'var(--error)';
-        statusMsg.textContent = 'Error creating PDF: ' + err.message;
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit & Download PDF';
+        console.error('PDF precompile error:', err);
       }
+
+      // 3. Populate Modal & Auto-copy to Clipboard
+      const previewEl = document.getElementById('chat-preview-text');
+      if (previewEl) previewEl.textContent = lastCompiledChatText;
+
+      const subOverlay = document.getElementById('submission-modal-overlay');
+      if (subOverlay) subOverlay.style.display = 'flex';
+
+      navigator.clipboard.writeText(lastCompiledChatText).then(() => {
+        const banner = document.getElementById('copy-status-banner');
+        if (banner) banner.innerHTML = '<span>&#128203;</span> <span>Copied to clipboard automatically! Ready to paste into chat (Ctrl + V).</span>';
+      }).catch(() => {
+        const banner = document.getElementById('copy-status-banner');
+        if (banner) banner.innerHTML = '<span>&#9888;</span> <span>Click the blue button below to copy your assessment.</span>';
+      });
+
+      submitBtn.textContent = 'Submitted Successfully';
+      submitBtn.disabled = true;
     });
+
+    // 4. Modal Copy Button Handler
+    const btnCopyChat = document.getElementById('btn-copy-chat');
+    if (btnCopyChat) {
+      btnCopyChat.addEventListener('click', () => {
+        if (!lastCompiledChatText) return;
+        navigator.clipboard.writeText(lastCompiledChatText).then(() => {
+          const originalText = btnCopyChat.innerHTML;
+          btnCopyChat.innerHTML = '<span>&#10004;</span> Copied to Clipboard!';
+          btnCopyChat.style.background = '#16a34a';
+          setTimeout(() => {
+            btnCopyChat.innerHTML = originalText;
+            btnCopyChat.style.background = '#0284c7';
+          }, 2500);
+        }).catch(() => {
+          alert('Could not copy automatically. Please select text in the preview box and copy manually.');
+        });
+      });
+    }
+
+    // 5. Modal Backup PDF Handler
+    const btnBackupPdf = document.getElementById('btn-backup-pdf');
+    if (btnBackupPdf) {
+      btnBackupPdf.addEventListener('click', () => {
+        if (lastCompiledPdfDoc && lastCompiledFilename) {
+          lastCompiledPdfDoc.save(lastCompiledFilename);
+          const originalText = btnBackupPdf.innerHTML;
+          btnBackupPdf.innerHTML = '<span>&#10004;</span> PDF Downloaded!';
+          setTimeout(() => {
+            btnBackupPdf.innerHTML = originalText;
+          }, 2500);
+        } else {
+          alert('PDF generation not ready. Please copy the text report.');
+        }
+      });
+    }
   </script>
 </body>
 </html>
