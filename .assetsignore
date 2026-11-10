@@ -4,3 +4,4 @@ wrangler.json
 .gitignore
 CREDENTIALS.md
 node_modules
+.wrangler
