@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DevOps Technical Assessment — Quiz Set 7</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- Active Candidate Credentials -->
   <script src="users.js"></script>
   <style>
@@ -668,29 +667,6 @@
       background: #0369a1;
     }
 
-    .btn-backup-pdf {
-      width: 100%;
-      background: #f8fafc;
-      color: #334155;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background 0.2s;
-      margin-bottom: 14px;
-    }
-
-    .btn-backup-pdf:hover {
-      background: #e2e8f0;
-      color: #0f172a;
-    }
-
     .chat-preview-box {
       background: #0f172a;
       color: #e2e8f0;
@@ -732,7 +708,7 @@
           <span class="rule-icon">&#10004;</span>
           <div>
             <strong>All 16 Questions Are Mandatory</strong>
-            <p>You cannot submit or generate your result PDF until all questions (10 Linux MCQs + 6 technical challenges) are answered.</p>
+            <p>You cannot submit your assessment report until all questions (10 Linux MCQs + 6 technical challenges) are answered.</p>
           </div>
         </div>
 
@@ -740,7 +716,7 @@
           <span class="rule-icon">&#128203;</span>
           <div>
             <strong>Instant Assessment Submission & Chat Copy</strong>
-            <p>Upon clicking submit, your responses are automatically compiled with a 1-click button to copy everything into interview chat (Zoom / Teams / Slack), plus an optional backup PDF.</p>
+            <p>Upon clicking submit, your responses are automatically compiled with a 1-click button to copy everything into interview chat (Zoom / Teams / Slack), ready to paste directly to your interviewer.</p>
           </div>
         </div>
 
@@ -817,10 +793,6 @@
 
       <button type="button" class="btn-copy-chat" id="btn-copy-chat">
         <span>&#128203;</span> Copy Assessment to Clipboard
-      </button>
-
-      <button type="button" class="btn-backup-pdf" id="btn-backup-pdf">
-        <span>&#128196;</span> Download Backup PDF
       </button>
 
       <div style="text-align: left; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 5px;">Response Preview:</div>
@@ -1478,8 +1450,6 @@ How do you configure and run a pipeline stage using Docker agents?</div>
   }
 ];
 
-    let lastCompiledPdfDoc = null;
-    let lastCompiledFilename = '';
     let lastCompiledChatText = '';
 
     function buildChatReport(firstName, lastName, email, formData) {
@@ -1539,150 +1509,8 @@ How do you configure and run a pipeline stage using Docker agents?</div>
       const formData = new FormData(form);
       const safeFirst = firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
       const safeLast = lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      lastCompiledFilename = `${safeFirst}_${safeLast}_${quizTitle.replace(/\s+/g, '_')}.pdf`;
-
       // 1. Compile Chat Plaintext Report
       lastCompiledChatText = buildChatReport(firstName, lastName, email, formData);
-
-      // 2. Prepare Backup PDF in memory
-      try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({
-          orientation: 'portrait',
-          unit: 'pt',
-          format: 'a4'
-        });
-
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 40;
-        const contentWidth = pageWidth - (margin * 2);
-        let y = margin;
-
-        function checkPage(needed) {
-          if (y + needed > pageHeight - 50) {
-            doc.addPage();
-            y = margin;
-          }
-        }
-
-        // Header Banner
-        doc.setFillColor(15, 23, 42);
-        doc.rect(margin, y, contentWidth, 38, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(13);
-        doc.text('DEVOPS TECHNICAL ASSESSMENT REPORT', margin + 14, y + 24);
-        y += 48;
-
-        // Info Box
-        doc.setFillColor(248, 250, 252);
-        doc.setDrawColor(203, 213, 225);
-        doc.roundedRect(margin, y, contentWidth, 68, 4, 4, 'FD');
-
-        doc.setFontSize(9.5);
-        doc.setTextColor(71, 85, 105);
-        doc.text('Candidate Name:', margin + 14, y + 20);
-        doc.text('Email Address:', margin + 14, y + 38);
-        doc.text('Assessment Set:', margin + 14, y + 56);
-
-        doc.setTextColor(15, 23, 42);
-        doc.text(`${firstName} ${lastName}`, margin + 120, y + 20);
-        doc.text(email, margin + 120, y + 38);
-        doc.text(`${quizTitle} (Submitted: ${new Date().toLocaleString()})`, margin + 120, y + 56);
-        y += 82;
-
-        // Section Title
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(2, 132, 199);
-        doc.text('ASSESSMENT RESPONSES', margin, y);
-        doc.setDrawColor(2, 132, 199);
-        doc.setLineWidth(1.5);
-        doc.line(margin, y + 4, margin + contentWidth, y + 4);
-        y += 18;
-
-        questionsMeta.forEach((q) => {
-          const rawAnswer = formData.get(q.id) || 'No response provided';
-
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(10);
-          const fullQuestionTitle = `[${q.category}] ${q.title}`;
-          const qLines = doc.splitTextToSize(fullQuestionTitle, contentWidth);
-          const qHeight = qLines.length * 13;
-
-          let descLines = [];
-          let descHeight = 0;
-          if (q.desc) {
-            doc.setFont('helvetica', 'italic');
-            doc.setFontSize(8.5);
-            descLines = doc.splitTextToSize(q.desc, contentWidth - 16);
-            descHeight = (descLines.length * 11) + 6;
-          }
-
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(9.5);
-          const answerPrefix = q.type === 'mcq' ? 'Selected Answer: ' : '';
-          const ansLines = doc.splitTextToSize(answerPrefix + rawAnswer, contentWidth - 24);
-          const ansHeight = (ansLines.length * 13) + 14;
-
-          checkPage(qHeight + descHeight + ansHeight + 18);
-
-          doc.setFont('helvetica', 'bold');
-          doc.setTextColor(15, 23, 42);
-          doc.setFontSize(10);
-          doc.text(qLines, margin, y);
-          y += qHeight + 2;
-
-          if (q.desc) {
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(100, 116, 139);
-            doc.setFontSize(8.5);
-            doc.text(descLines, margin + 8, y + 8);
-            y += descHeight;
-          }
-
-          if (q.type === 'mcq') {
-            doc.setFillColor(240, 249, 255);
-            doc.setDrawColor(186, 230, 253);
-            doc.roundedRect(margin, y, contentWidth, ansHeight, 3, 3, 'FD');
-            doc.setFillColor(2, 132, 199);
-            doc.rect(margin, y, 3.5, ansHeight, 'F');
-
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(3, 105, 161);
-            doc.setFontSize(9.5);
-            doc.text(ansLines, margin + 12, y + 13);
-          } else {
-            doc.setFillColor(241, 245, 249);
-            doc.setDrawColor(226, 232, 240);
-            doc.roundedRect(margin, y, contentWidth, ansHeight, 3, 3, 'FD');
-            doc.setFillColor(2, 132, 199);
-            doc.rect(margin, y, 3.5, ansHeight, 'F');
-
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(30, 41, 59);
-            doc.setFontSize(9.5);
-            doc.text(ansLines, margin + 12, y + 13);
-          }
-
-          y += ansHeight + 14;
-        });
-
-        const totalPages = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-          doc.setPage(i);
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(`Candidate: ${firstName} ${lastName} (${email}) — ${quizTitle} | Designed by Narendra Godi`, margin, pageHeight - 20);
-          doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 20, { align: 'right' });
-        }
-
-        lastCompiledPdfDoc = doc;
-      } catch (err) {
-        console.error('PDF precompile error:', err);
-      }
 
       // 3. Populate Modal & Auto-copy to Clipboard
       const previewEl = document.getElementById('chat-preview-text');
@@ -1719,23 +1547,6 @@ How do you configure and run a pipeline stage using Docker agents?</div>
         }).catch(() => {
           alert('Could not copy automatically. Please select text in the preview box and copy manually.');
         });
-      });
-    }
-
-    // 5. Modal Backup PDF Handler
-    const btnBackupPdf = document.getElementById('btn-backup-pdf');
-    if (btnBackupPdf) {
-      btnBackupPdf.addEventListener('click', () => {
-        if (lastCompiledPdfDoc && lastCompiledFilename) {
-          lastCompiledPdfDoc.save(lastCompiledFilename);
-          const originalText = btnBackupPdf.innerHTML;
-          btnBackupPdf.innerHTML = '<span>&#10004;</span> PDF Downloaded!';
-          setTimeout(() => {
-            btnBackupPdf.innerHTML = originalText;
-          }, 2500);
-        } else {
-          alert('PDF generation not ready. Please copy the text report.');
-        }
       });
     }
   </script>
